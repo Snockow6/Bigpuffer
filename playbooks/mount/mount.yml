@@ -1,9 +1,7 @@
 - name: make mount directorys
   loop: "{{ create_mounts }}"
   include: create_directorys.yml
-  when: item.state == present
 
 - name: Add mounts to fstab and mount them
   loop: "{{ create_mounts }}"
   include: fstab_mount.yml
-  when: item.state == present
