@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 echo "Run main.yml playbook"
 if which ansible &> /dev/null # checks to see if ansible is installed
 then 
   ansbile=true
 else
-  pip3 install ansible -y
+  pip3 install ansible
 fi
 
 echo "Checking Connection with Server"
-if ping -c 1 192.168.10.102 &> /dev/null
+if ping -c 1 bigpuffer.shed.lan &> /dev/null
 then
   echo "Success"
 else
