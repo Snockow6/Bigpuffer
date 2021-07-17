@@ -2,4 +2,3 @@
 - file:
     path: "{{ item.mountpoint }}"
     state: directory
-  when: item.state == present

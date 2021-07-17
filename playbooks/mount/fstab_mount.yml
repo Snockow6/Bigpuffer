@@ -4,9 +4,8 @@
     path: /etc/fstab
     state: present
     line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }} 0 0" 
-  when: item.state == present
   register: mount_state
 
 - name: "mount {{ item.name }}"
   command: mount "{{ item.mountpoint }}"
-  when: mount_state.changed == true and item.state == present
+  when: mount_state.changed == true
