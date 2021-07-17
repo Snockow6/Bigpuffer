@@ -1,5 +1,5 @@
 ---
-- name: install glusterfs
+- name: install glusterfs-fuse
   package:
-    name: glusterfs
+    name: glusterfs-fuse
     state: present
