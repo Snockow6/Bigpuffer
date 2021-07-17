@@ -1,12 +1,12 @@
-- name: make directorys for "{{ item }}"
+- name: make mount directorys
   loop: "{{ create_mounts }}"
   file:
     path: "{{ item.mountpoint }}"
     state: directory
 
-- name: Add "{{ item.name }}" to fstab
+- name: Add mounts to fstab
   loop: "{{ create_mounts }}"
   ansible.builtin.lineinfile:
     path: /etc/fstab
     state: present
-    regexp: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
+    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
