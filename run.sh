@@ -9,12 +9,12 @@ fi
 
 echo "Check ansible galaxy modules are installed\n"
 # check for posix 
-if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix" ]; then
+if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix/" ]; then
   ansible-galaxy collection install ansible.posix
 fi
 
 # check for community general 
-if [ ! -d "~/.ansbile/collections/ansible_collections/community/general" ]; then
+if [ ! -d "~/.ansible/collections/ansible_collections/community/" ]; then
   ansible-galaxy collection install community.general
 
 fi
