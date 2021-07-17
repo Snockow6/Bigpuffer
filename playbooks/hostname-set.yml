@@ -1,0 +1,4 @@
+- name: Set hostname using systemd
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+    strategy: systemd
