@@ -1,3 +1,9 @@
+- name: Add servers to hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    state: present
+    line: "bikinibodhi 192.168.10.3"
+
 - name: make mount directorys
   loop: "{{ create_mounts }}"
   include: create_directorys.yml
