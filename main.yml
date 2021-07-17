@@ -3,7 +3,7 @@
   hosts: all
   become: yes
   vars_files:
-    - vars/container.yml
+    - vars/containers.yml
     - vars/group.yml
     - vars/user.yml
 
