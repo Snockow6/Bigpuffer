@@ -1,0 +1,11 @@
+---
+- name: install nfs server
+  package:
+    name: nfs-utils
+    state: present
+
+- name: start and enable nfs-server
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: nfs-server

@@ -1,0 +1,49 @@
+---
+ContainerConfigs: /Container/config
+ContainerData: /Container/data
+ContainerLogs: /Container/logs
+ContainerCache: /mnt/Gamma/Cache
+
+PodmanContainers:
+  #- Letsencrypt
+  - Jellyfin
+  - Netbootxyz
+  - Heimdall
+  #- Pihole
+  #- Netdata
+  - Jackett
+  - qbittorrent
+  - Wordpress
+  - Sonarr
+  - Podget
+  - Lancache
+  - Nextcloud
+  #- Netbox-community
+  #- Gitlab
+
+#Linuxserver.io vars
+UserID: 101009 # abc user
+GroupID: 101009 # serverio group
+TimeZone: Pacific/Auckland
+
+#Lancache vars
+lancacheIP: "192.168.10.2"
+
+PiholeIP: "192.168.10.6"
+
+#Jellyfin vars
+Youtubevids: "/mnt/Delta/YoutubeVids"
+Podcasts: "/mnt/Delta/Podcasts"
+Music: "/mnt/Delta/Music"
+
+#Sonarr vars
+Anime: "/nfs/Anime"
+Tvshows: "/nfs/Tvshows"
+Sonarr_User: localadmin
+Sonarr_Password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          33323634386266326236323537636232636233303730346662303164346133653731323962336261
+          6134343666393234393235373662316365363864663135350a646232653334316239383430326166
+          37653234613061313030393536363934386630306563383030356165323234383966643166363364
+          3964646236343836340a343930346666666134643833333736663437396537396464373332336662
+          6263

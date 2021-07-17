@@ -1,0 +1,67 @@
+---
+- name: Create {{ item }} pod
+  containers.podman.podman_pod:
+    name: "{{ item }}"
+    state: started
+    ports:
+      - 8082:80/tcp
+#################################################################
+# Create Wordpress db 
+##################################################################
+
+- name: Create {{ item }}_db Podman pod
+  containers.podman.podman_container:
+    name: "{{ item }}_db"
+    pod: "{{ item }}"
+    image: docker.io/library/mysql:5.7
+    env:
+      MYSQL_DATABASE="{{ item }}"
+      MYSQL_USER="{{ item }}"
+      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_RANDOM_ROOT_PASSWORD="1"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}_db:/var/lib/mysql:rw"
+
+  register: state
+
+##################################################################
+# Create Wordpress app 
+##################################################################
+
+- name: Create {{ item }}_app Podman pod
+  containers.podman.podman_container:
+    name: "{{ item }}_app"
+    pod: "{{ item }}"
+    image: docker.io/library/wordpress:latest
+    env:
+      WORDPRESS_DB_HOST="{{ item }}_db"
+      WORDPRESS_DB_USER="{{ item }}"
+      WORDPRESS_DB_PASSWORD="{{ Sonarr_Password }}"
+      WORDPRESS_DB_NAME="{{ item }}"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}_app:/var/www/html:rw"
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "pod-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "pod-{{ item }}"
+  when: state.changed == false
+  
+- name: allow 8082/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 8082/tcp
+    permanent: yes
+    state: enabled

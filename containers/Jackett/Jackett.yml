@@ -1,0 +1,41 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: ghcr.io/linuxserver/jackett:latest
+    ports:
+      - 9117:9117
+    env:
+      PGID="{{ GroupID }}"
+      PUID="{{ UserID }}"
+      TZ="{{ TimeZone}}"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
+      - "{{ ContainerData }}/{{ item }}/downloads:/downloads:rw"
+  register: state
+  
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
+
+- name: allow 9117/tcp on firewalld
+  become: yes
+  ansible.posix.firewalld:
+    port: 9117/tcp
+    permanent: yes
+    state: enabled

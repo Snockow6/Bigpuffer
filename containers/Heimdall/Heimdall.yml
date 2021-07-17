@@ -1,0 +1,40 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: ghcr.io/linuxserver/heimdall:latest
+    ports:
+      - 4443:443
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ UserID }}"
+      TZ="{{ TimeZone }}"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
+  register: state
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
+
+- name: allow 4443/tcp on firewalld
+  ansible.posix.firewalld:
+    immediate: yes
+    port: 4443/tcp
+    permanent: yes
+    state: enabled

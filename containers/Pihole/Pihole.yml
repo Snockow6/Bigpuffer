@@ -1,0 +1,57 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: pihole/pihole:latest
+    hostname: "{{ item }}"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    ports:
+      - "{{ PiholeIP }}:53:53/tcp"
+      - "{{ PiholeIP }}:53:53/udp"
+      - "{{ PiholeIP }}:80:80/tcp"
+    env:
+      DNSMASQ_USER=root
+      TZ="{{ TimeZone }}"
+      WEBPASSWORD="{{ Sonarr_Password }}"
+      DNS1="{{ lancacheIP }}"
+      ServerIP="{{ PiholeIP }}"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}:/etc/pihole/:rw"
+      - "{{ ContainerConfigs }}/dnsmasqd:/etc/dnsmasq.d/:rw"
+  register: state
+
+#podman generate systemd --files --name Wordpress 
+#Auto Generate systemd files
+# cd ~/.config/systemd/user && /usr/bin/podman generate systemd --files --name {{ item }}
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
+
+- name: allow 53/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 53/tcp
+    permanent: yes
+    state: enabled
+
+- name: allow 53/udp on firewalld
+  ansible.posix.firewalld:
+    port: 53/udp
+    permanent: yes
+    state: enabled

@@ -1,0 +1,7 @@
+---
+- name: create groups
+  loop: "{{ create_group }}"
+  group:
+    name: "{{ item.name }}"
+    state: present
+    gid: "{{ item.gid }}"

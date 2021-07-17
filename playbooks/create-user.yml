@@ -1,0 +1,9 @@
+---
+- name: create Users
+  loop: "{{ create_users }}"
+  user:
+    name: "{{ item.name }}"
+    state: present
+    shell: /bin/bash
+    uid: "{{ item.uid }}"
+    groups: "{{ item.groups }}"

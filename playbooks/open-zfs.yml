@@ -1,0 +1,25 @@
+---
+- name: install  Openzfs package | Fedora {{ ansible_distribution_major_version }}
+  dnf:
+    name: https://zfsonlinux.org/fedora/zfs-release.fc{{ ansible_distribution_major_version }}.noarch.rpm
+    state: present
+    disable_gpg_check: yes
+  when:  ansible_distribution  == 'Fedora'
+
+- name: install kernel devel | Fedora {{ ansible_distribution_major_version }}
+  dnf:
+    name:
+      - kernel-devel
+    state: present
+  when:  ansible_distribution  == 'Fedora'
+
+- name: install zfs | Fedora or CentOS
+  package:
+    name: zfs
+    state: latest
+  when:  ansible_distribution  == 'Fedora'
+
+- name: Add zfs module
+  community.general.modprobe:
+    name: zfs
+    state: present

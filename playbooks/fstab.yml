@@ -1,0 +1,22 @@
+- name: add nfs Shares
+  blockinfile:
+    path: /etc/fstab
+    block: |
+      #bikinibodhi:/Guardian/shares/Anime      /nfs/Anime      nfs     defaults        0 0
+      #bikinibodhi:/Guardian/Containers/config /Container/config       nfs     defaults        0 0
+      #bikinibodhi:/Guardian/Containers/data /Container/data       nfs     defaults        0 0
+      #bikinibodhi:/Guardian/Containers/logs /Container/logs       nfs     defaults        0 0
+      bikinibodhi:/Guardian/Containers /Container       nfs     defaults        0 0
+  register: state
+
+- name: add glusterfs Shares
+  blockinfile:
+    path: /etc/fstab
+    block: |
+      bikinibodhi:/Disks /var/lib/libvirt/images glusterfs defaults,_netdev 0 0
+      bikinibodhi:/Anime /nfs/Anime glusterfs defaults,_netdev 0 0
+  register: state
+
+- name: mount all
+  command: sudo mount -a
+  when: state.changed == true

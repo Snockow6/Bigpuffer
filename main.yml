@@ -1,0 +1,60 @@
+---
+- name: playbook to configure bigpuffer server
+  hosts: all
+  vars_files:
+    - vars/container.yml
+    - vars/group.yml
+    - vars/user.yml
+  tasks:
+
+    - name: update linux
+      become: yes
+      include: playbooks/update-linux.yml
+    
+    - name: add groups
+      become: yes
+      include: playbooks/create-group.yml
+
+    - name: add users
+      become: yes
+      include: playbooks/create-user.yml
+  
+    - name: disable systemd-resolved
+      become: yes
+      include: playbooks/systemd-resolved.yml
+    
+    #- name: install and configure dnsmasq
+     # become: yes
+     # include: playbooks/dnsmasq.yml
+    
+    - name: config fstab
+      become: yes
+      include: playbooks/fstab.yml
+
+    #- name: install and enable cockpit
+    #  become: yes
+    #  include: playbooks/cockpit.yml
+
+    #- name: install and enable samba
+    #  become: yes
+    #  include: playbooks/samba.yml
+
+    #- name: install and enable nfs server
+    #  become: yes
+    #  include: playbooks/nfs-server.yml
+
+    #- name: install and load openzfs
+    #  become: yes
+    #  include: playbooks/openzfs.yml
+
+    #- name: add cockpit zfs manager
+    #  become: yes
+    #  include: playbooks/cockpit-zfs-manager.yml
+
+    #- name: install podman
+    #  become: yes
+    #  include: playbooks/podman.yml
+
+    - name: run containers
+      become: yes
+      include: playbooks/containers/main.yml

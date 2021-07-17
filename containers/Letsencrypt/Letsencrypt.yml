@@ -1,0 +1,61 @@
+---
+- name: Create a podman network
+  containers.podman.podman_network:
+    name: Lets_encrypt
+
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: ghcr.io/linuxserver/letsencrypt
+    cap_add:
+      - NET_ADMIN
+    state: present
+    ports:
+      - 9443:443
+      - 9080:80
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ GroupID }}"
+      TZ="{{ TimeZone }}"
+      URL="shedinternet.net"
+      SUBDOMAINS="www,cloud,tv"
+      VALIDATION="dns"
+      DNSPLUGIN="cloudflare"
+    volume:
+      - "/Container/{{ item }}/config:/config:rw"
+    network:
+      - Lets_encrypt
+  register: state
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
+
+- name: allow 9443/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 9443/tcp
+    immediate: yes
+    permanent: yes
+    state: enabled
+
+- name: allow 9080/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 9080/tcp
+    immediate: yes
+    permanent: yes
+    state: enabled

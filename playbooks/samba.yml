@@ -1,0 +1,17 @@
+---
+- name: install samba server
+  package:
+    name: samba
+    state: present
+
+- name: start and enable smb
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: smb
+
+- name: start and enable nmb
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: nmb

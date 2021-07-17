@@ -1,0 +1,14 @@
+---
+- name: stop and disable resolvd
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: no
+    name: "systemd-resolved"
+
+- name: Copy Resolv config file
+  ansible.builtin.copy:
+    src: files/resolv.conf
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: '0755'

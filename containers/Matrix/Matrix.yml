@@ -1,0 +1,44 @@
+---
+- name: Make "{{ item }}" Systemd service
+  copy:
+    dest: "/etc/systemd/system/{{ item }}.service"
+    content: |
+      [Unit]
+      Description=Run {{ item }}
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      ExecStartPre=-/usr/bin/podman kill {{ item }}
+      ExecStartPre=-/usr/bin/podman rm {{ item }}
+      ExecStartPre=-/usr/bin/podman pull docker.io/matrixdotorg/synapse:latest
+      ExecStart=/usr/bin/podman run \
+      --name {{ item }} \
+      --volume {{ ContainerConfigs }}/{{ item }}:/data:rw \
+      -p 8008:8008 \
+      docker.io/matrixdotorg/synapse:latest
+
+      ExecStop=/usr/bin/podman stop {{ item }}
+
+      [Install]
+      WantedBy=multi-user.target
+  register: Matrix_State
+
+- name: reload systemd
+  command: >-
+    systemctl daemon-reload
+  when: Matrix_State.changed == true
+
+- name: restart "{{ item }}" service if changed
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: yes
+    name: "{{ item }}"
+  when: Matrix_State.changed == true
+
+- name: Start "{{ item }}" service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "{{ item }}"
+  when: Matrix_State.changed == false

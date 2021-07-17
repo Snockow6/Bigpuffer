@@ -1,0 +1,4 @@
+---
+- name: deploy containers
+  loop: "{{ PodmanContainers }}"
+  include_tasks: "containers/{{ item }}/{{ item }}.yml"

@@ -1,0 +1,60 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: ghcr.io/linuxserver/transmission:latest
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ UserID }}"
+      TZ="{{ TimeZone }}"
+      USER="{{ Sonarr_User }}"
+      PASS="{{ Sonarr_Password }}"
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}:/config:Z"
+      - "{{ ContainerCache }}/Sonarr:/downloads:Z"
+
+  register: state
+
+#podman generate systemd --files --name Wordpress 
+#Auto Generate systemd files
+# cd ~/.config/systemd/user && /usr/bin/podman generate systemd --files --name {{ item }}
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
+
+- name: allow 9091/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 9091/tcp
+    permanent: yes
+    state: enabled
+
+- name: allow 51413/tcp on firewalld
+  ansible.posix.firewalld:
+    port: 51413/tcp
+    permanent: yes
+    state: enabled
+
+- name: allow 51413/udp on firewalld
+  ansible.posix.firewalld:
+    port: 51413/udp
+    permanent: yes
+    state: enabled
