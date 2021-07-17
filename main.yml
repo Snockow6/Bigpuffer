@@ -42,8 +42,5 @@
     #- name: add cockpit zfs manager
     #  include: playbooks/cockpit-zfs-manager.yml
 
-    - name: install podman
-      include: playbooks/podman.yml
-
     - name: run containers
       include: containers/main.yml
