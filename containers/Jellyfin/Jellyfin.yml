@@ -1,21 +1,24 @@
 ---
+- name: Create {{ item }} config folder
+  file:
+    path: "/Container/{{ item }}/config"
+    state: directory
+
+- name: Create {{ item }} logs folder
+  file:
+    path: "/Container/{{ item }}/logs"
+    state: directory
+
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
     image: ghcr.io/linuxserver/jellyfin:latest
     state: created
-    device:
-      - "/dev/dri/renderD128:/dev/dri/renderD128:rw"
-      - "/dev/dri/card0:/dev/dri/card0:rw"
     ports:
       - 8096:8096
     volume:
       - "{{ ContainerLogs }}/{{ item }}:/config/log:rw"
       - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
-      - "{{ Podcasts }}:/data/Podcasts:z,ro"
-      - "{{ Youtubevids }}:/data/YoutubeVids:z,ro"
-      - "{{ Music }}:/data/Music:z,ro"
-      - "{{ Anime }}:/data/Anime:ro"
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
