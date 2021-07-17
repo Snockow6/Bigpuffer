@@ -24,8 +24,8 @@
     #- name: install and configure dnsmasq
      # include: playbooks/dnsmasq.yml
     
-    - name: config fstab
-      include: playbooks/fstab.yml
+    - name: add mounts to fstab and mount it
+      include: playbooks/mount.yml
 
     - name: install and enable cockpit
       include: playbooks/cockpit.yml

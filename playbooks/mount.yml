@@ -15,4 +15,4 @@
   loop: "{{ create_mounts }}"
   ansible.posix.mount:
     path: "{{ item.mountpoint }}"
-    state: remounted
+    state: mount
