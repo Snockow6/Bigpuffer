@@ -1,15 +1,7 @@
 - name: make mount directorys
   loop: "{{ create_mounts }}"
-  include_tasks: create_directorys.yml
+  include: create_directorys.yml
 
-- name: Add mounts to fstab and mount them
+- name: Add mounts to fstab and mount
   loop: "{{ create_mounts }}"
-  ansible.builtin.lineinfile:
-    path: /etc/fstab
-    state: present
-    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
-  
-- name: mount
-  loop: "{{ create_mounts }}"
-  command: sudo mount "{{ item.mountpoint }}"
-  changed_when: false
+  include: fstab_mount.yml

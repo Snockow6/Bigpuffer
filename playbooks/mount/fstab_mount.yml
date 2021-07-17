@@ -7,5 +7,5 @@
   mount_register: state
 
 - name: mount {{ item.name }}
-  command: sudo mount "{{ item.mountpoint }}"
+  command: mount "{{ item.mountpoint }}"
   when: state.changed == true
