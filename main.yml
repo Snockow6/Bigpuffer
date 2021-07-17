@@ -18,8 +18,6 @@
     - name: add users
       include: playbooks/create-user.yml
     
-    #- name: install and configure dnsmasq
-     # include: playbooks/dnsmasq.yml
 
     - name: install and enable samba
       include: playbooks/samba.yml
