@@ -4,19 +4,19 @@ create_mounts:
     mountpoint: "/nfs/Anime"
     type: "glusterfs"
     opts: "defaults,_netdev"
-    src: bikinibodhi:/Anime
+    src: bikinibodhi.shed.lan:/Anime
     state: present
 
   - name: "Disks"
     mountpoint: "/var/lib/libvirt/images"
     type: "glusterfs"
     opts: "defaults,_netdev"
-    src: bikinibodhi:/Disks
+    src: bikinibodhi.shed.lan:/Disks
     state: present
 
   - name: "Containers"
     mountpoint: "/Container"
     type: "nfs"
     opts: "rw,sync,hard"
-    src: "bikinibodhi:/Guardian/Containers"
+    src: "bikinibodhi.shed.lan:/Guardian/Containers"
     state: present
