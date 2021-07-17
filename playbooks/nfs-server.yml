@@ -10,9 +10,3 @@
     name: nfs-common
     state: present
   when: ansible_os_family == "Debian"
-
-- name: start and enable nfs-server
-  ansible.builtin.systemd:
-    state: started
-    enabled: yes
-    name: nfs-server
