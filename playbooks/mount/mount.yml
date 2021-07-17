@@ -4,4 +4,12 @@
 
 - name: Add mounts to fstab and mount them
   loop: "{{ create_mounts }}"
-  include_tasks: fstab_mount.yml
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    state: present
+    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
+  
+- name: mount
+  loop: "{{ create_mounts }}"
+  command: sudo mount "{{ item.mountpoint }}"
+  changed_when: false
