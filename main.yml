@@ -23,6 +23,15 @@
     
     #- name: install and configure dnsmasq
      # include: playbooks/dnsmasq.yml
+
+    - name: install and enable samba
+      include: playbooks/samba.yml
+
+    - name: install and enable nfs server
+      include: playbooks/nfs-server.yml
+
+    - name: install and enable glusterfs
+      include: playbooks/glusterfs.yml
     
     - name: add mounts to fstab and mount it
       include: playbooks/mount/mount.yml
@@ -30,11 +39,7 @@
     - name: install and enable cockpit
       include: playbooks/cockpit.yml
 
-    #- name: install and enable samba
-    #  include: playbooks/samba.yml
 
-    #- name: install and enable nfs server
-    #  include: playbooks/nfs-server.yml
 
     - name: install and load openzfs
       include: playbooks/open-zfs-install.yml
