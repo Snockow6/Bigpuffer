@@ -47,7 +47,6 @@
     state: latest
   when:  ansible_distribution  == 'Fedora' or ansible_distribution == 'CentOS'
 
----
 - name: add buster backports | Debian 10
   copy:
     dest: "/etc/apt/sources.list.d/buster-backports.list"
