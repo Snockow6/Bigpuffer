@@ -27,11 +27,11 @@
     - name: install and enable nfs server
       include: playbooks/nfs-server.yml
 
-    - name: install and enable glusterfs
-      include: playbooks/glusterfs.yml
+    #- name: install and enable glusterfs
+      #include: playbooks/glusterfs.yml
     
-    - name: add mounts to fstab and mount it
-      include: playbooks/mount/mount.yml
+    #- name: add mounts to fstab and mount it
+      #include: playbooks/mount/mount.yml
 
     - name: install and enable cockpit
       include: playbooks/cockpit.yml
