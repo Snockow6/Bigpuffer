@@ -13,6 +13,16 @@
     group: root
     mode: '0755'
 
+- name: Create {{ item }} config folder
+  file:
+    path: "/Container/{{ item }}/config"
+    state: directory
+
+- name: Create dnsmasq folder
+  file:
+    path: "/Container/{{ item }}/dnsmasqd"
+    state: directory
+
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
@@ -32,8 +42,8 @@
       DNS1="{{ lancacheIP }}"
       ServerIP="{{ PiholeIP }}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/etc/pihole/:rw"
-      - "{{ ContainerConfigs }}/dnsmasqd:/etc/dnsmasq.d/:rw"
+      - "/Container/{{ item }}/config:/etc/pihole/:rw"
+      - "/Container/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:rw"
   register: state
 
 #podman generate systemd --files --name Wordpress 
