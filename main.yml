@@ -17,9 +17,6 @@
 
     - name: add users
       include: playbooks/create-user.yml
-  
-    #- name: disable systemd-resolved
-    #  include: playbooks/systemd-resolved.yml
     
     #- name: install and configure dnsmasq
      # include: playbooks/dnsmasq.yml
@@ -39,16 +36,14 @@
     - name: install and enable cockpit
       include: playbooks/cockpit.yml
 
-
-
     - name: install and load openzfs
       include: playbooks/open-zfs-install.yml
 
     #- name: add cockpit zfs manager
     #  include: playbooks/cockpit-zfs-manager.yml
 
-    #- name: install podman
-    #  include: playbooks/podman.yml
+    - name: install podman
+      include: playbooks/podman.yml
 
     - name: run containers
       include: containers/main.yml
