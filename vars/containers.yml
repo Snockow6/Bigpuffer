@@ -12,7 +12,7 @@ PodmanContainers:
   #- Pihole
   #- Netdata
   - Jackett
-  - qbittorrent
+  - Qbittorrent
   - Wordpress
   - Sonarr
   - Podget
