@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Run main.yml playbook \n"
+echo "Run main.yml playbook"
 if which ansible &> /dev/null # checks to see if ansible is installed
 then 
   ansbile=true
@@ -7,7 +7,7 @@ else
   pip3 install ansible -y
 fi
 
-echo "Check ansible galaxy modules are installed\n"
+echo "Check ansible galaxy modules are installed"
 # check for posix 
 if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix/" ]; then
   ansible-galaxy collection install ansible.posix
