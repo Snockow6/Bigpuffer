@@ -1,0 +1,4 @@
+---
+file:
+  path: "{{ item.mountpoint }}"
+  state: directory

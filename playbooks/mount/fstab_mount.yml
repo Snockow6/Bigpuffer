@@ -1,0 +1,11 @@
+---
+- name: Add {{ item.name }} to fstab 
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    state: present
+    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
+  mount_register: state
+
+- name: mount {{ item.name }}
+  command: sudo mount "{{ item.mountpoint }}"
+  when: state.changed == true
