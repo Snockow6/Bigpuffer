@@ -25,7 +25,7 @@
      # include: playbooks/dnsmasq.yml
     
     - name: add mounts to fstab and mount it
-      include: playbooks/mount.yml
+      include: playbooks/mount/mount.yml
 
     - name: install and enable cockpit
       include: playbooks/cockpit.yml
