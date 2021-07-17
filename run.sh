@@ -1,11 +1,24 @@
 #!/bin/bash
-echo "Run main.yml playbook"
+echo "Run main.yml playbook \n"
 if which ansible &> /dev/null # checks to see if ansible is installed
 then 
   ansbile=true
 else
   pip3 install ansible -y
 fi
+
+echo "Check ansible galaxy modules are installed\n"
+# check for posix 
+if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix" ]; then
+  ansible-galaxy collection install ansible.posix
+fi
+
+# check for community general 
+if [ ! -d "~/.ansbile/collections/ansible_collections/community/general" ]; then
+  ansible-galaxy collection install community.general
+
+fi
+
 
 echo "Checking Connection with Server"
 if ping -c 1 192.168.10.102 &> /dev/null
