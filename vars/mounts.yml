@@ -1,0 +1,19 @@
+---
+name: create_mounts
+  - name: Anime
+    mountpoint: /nfs/Anime
+    type: glusterfs
+    opts: defaults,_netdev 0 0
+    src: bikinibodhi:/Anime
+
+  - name: Disks
+    mountpoint: /var/lib/libvirt/images
+    type: glusterfs
+    opts: defaults,_netdev 0 0
+    src: bikinibodhi:/Disks
+
+  - name: Containers
+    mountpoint: /Container
+    type: nfs
+    opts: defaults
+    src: bikinibodhi:/Guardian/Containers
