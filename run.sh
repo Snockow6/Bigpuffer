@@ -7,6 +7,15 @@ else
   pip3 install ansible -y
 fi
 
+echo "Checking Connection with Server"
+if ping -c 1 192.168.10.102 &> /dev/null
+then
+  echo "Success"
+else
+  echo "Server is Unreachable exiting"
+  exit
+fi
+
 echo "git pull latest from main"
 git pull
 
