@@ -17,8 +17,8 @@
     ports:
       - 8096:8096
     volume:
-      - "{{ ContainerLogs }}/{{ item }}:/config/log:rw"
-      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
+      - "/Container/{{ item }}/logs:/config/log:rw"
+      - "/Container/{{ item }}/config:/config:rw"
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
