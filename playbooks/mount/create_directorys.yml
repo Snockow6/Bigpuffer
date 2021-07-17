@@ -1,4 +1,5 @@
 ---
-- file:
+- name: Make sure mountpoint exists for {{ item.name }}
+  file:
     path: "{{ item.mountpoint }}"
     state: directory
