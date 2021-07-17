@@ -7,14 +7,10 @@
     - vars/group.yml
     - vars/user.yml
     - vars/mounts.yml
-    - vars/hostname.yml
 
   tasks:
     - name: update linux
       include: playbooks/update-linux.yml
-
-    - name: set hostname
-      include: playbooks/hostname-set.yml
 
     - name: add groups
       include: playbooks/create-group.yml
