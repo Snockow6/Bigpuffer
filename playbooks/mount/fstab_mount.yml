@@ -3,7 +3,7 @@
   ansible.builtin.lineinfile:
     path: /etc/fstab
     state: present
-    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 
+    line: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }} 0 0" 
   register: mount_state
 
 - name: "mount {{ item.name }}"
