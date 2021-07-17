@@ -1,14 +1,14 @@
-- name: make directorys for {{ item }}
+- name: make directorys for "{{ item }}"
   loop: "{{ create_mounts }}"
   file:
-    path: "{{ mountpoint }}"
+    path: "{{ item.mountpoint }}"
     state: directory
 
 - name: Mount {{ item }}
   loop: "{{ create_mounts }}"
   ansible.posix.mount:
-    path: "{{ mountpoint }}"
-    src: "{{ src }}"
-    fstype: "{{ type }}"
-    opts: "{{ opts }}"
+    path: "{{ item.mountpoint }}"
+    src: "{{ item.src }}"
+    fstype: "{{ item.type }}"
+    opts: "{{ item.opts }}"
     state: mounted
