@@ -1,4 +1,18 @@
 ---
+- name: stop and disable resolvd
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: no
+    name: "systemd-resolved"
+
+- name: Copy Resolv config file
+  ansible.builtin.copy:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: '0755'
+
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
@@ -46,12 +60,14 @@
 
 - name: allow 53/tcp on firewalld
   ansible.posix.firewalld:
+    immediate: yes
     port: 53/tcp
     permanent: yes
     state: enabled
 
 - name: allow 53/udp on firewalld
   ansible.posix.firewalld:
+    immediate: yes
     port: 53/udp
     permanent: yes
     state: enabled
