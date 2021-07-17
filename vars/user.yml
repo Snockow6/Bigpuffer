@@ -4,6 +4,7 @@ create_users:
     uid: "1000"
     groups: "nathan,users,serverio,wheel"
 
+  # This User is for Linuxserverio containers
   - name: "abc"
     uid: "101009"
-    groups: "abc,serverio"
+    groups: "serverio"
