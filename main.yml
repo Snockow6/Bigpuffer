@@ -39,8 +39,8 @@
     - name: install and load openzfs
       include: playbooks/open-zfs-install.yml
 
-    - name: add cockpit zfs manager
-      include: playbooks/cockpit-zfs-manager.yml
+    #- name: add cockpit zfs manager
+    #  include: playbooks/cockpit-zfs-manager.yml
 
     #- name: install podman
     #  include: playbooks/podman.yml
