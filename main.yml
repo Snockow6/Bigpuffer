@@ -6,6 +6,7 @@
     - vars/containers.yml
     - vars/group.yml
     - vars/user.yml
+    - vars/mounts.yml
 
   tasks:
     - name: update linux
