@@ -4,11 +4,9 @@
     path: "{{ item.mountpoint }}"
     state: directory
 
-- name: Mount {{ item }}
+- name: Add "{{ item.name }}" to fstab
   loop: "{{ create_mounts }}"
-  ansible.posix.mount:
-    path: "{{ item.mountpoint }}"
-    src: "{{ item.src }}"
-    fstype: "{{ item.type }}"
-    opts: "{{ item.opts }}"
-    state: mounted
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    state: present
+    regexp: "{{ item.src }} {{ item.mountpoint }} {{ item.type }} {{ item.opts }}" 

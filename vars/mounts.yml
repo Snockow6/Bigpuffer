@@ -15,5 +15,5 @@ create_mounts:
   - name: "Containers"
     mountpoint: "/Container"
     type: "nfs"
-    opts: "defaults"
+    opts: "rw,sync,hard"
     src: "bikinibodhi:/Guardian/Containers"
