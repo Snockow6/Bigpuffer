@@ -1,4 +1,4 @@
 ---
-file:
-  path: "{{ item.mountpoint }}"
-  state: directory
+- file:
+    path: "{{ item.mountpoint }}"
+    state: directory
