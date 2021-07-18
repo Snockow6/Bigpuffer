@@ -1,5 +1,5 @@
 ---
-- name: create Users
+- name: create standard User
   loop: "{{ create_users }}"
   user:
     name: "{{ item.name }}"
@@ -7,3 +7,24 @@
     shell: /bin/bash
     uid: "{{ item.uid }}"
     groups: "{{ item.groups }}"
+  when: item.type is not defined
+
+- name: create Admin RedHat User
+  loop: "{{ create_users }}"
+  user:
+    name: "{{ item.name }}"
+    state: present
+    shell: /bin/bash
+    uid: "{{ item.uid }}"
+    groups: "{{ item.groups }},wheel"
+  when: item.type is defined and item.type == "admin" and ansible_os_family == "RedHat"
+
+- name: create Admin Debian User
+  loop: "{{ create_users }}"
+  user:
+    name: "{{ item.name }}"
+    state: present
+    shell: /bin/bash
+    uid: "{{ item.uid }}"
+    groups: "{{ item.groups }},sudo"
+  when: item.type is defined and item.type == "admin" and ansible_os_family == "Debian"
