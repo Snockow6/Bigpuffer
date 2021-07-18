@@ -1,9 +1,0 @@
----
-- name: install podman
-  package:
-    name: podman
-    state: present
-
-- name: deploy containers
-  loop: "{{ PodmanContainers }}"
-  include_tasks: "containers/{{ item }}/{{ item }}.yml"
