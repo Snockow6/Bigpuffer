@@ -1,0 +1,13 @@
+---
+- name: install epel-release, git and dnf-plugins-core
+  package:
+    name:
+      - epel-release
+      - git
+      - dnf-plugins-core
+    state: present
+
+- name: add powertools
+  dnf:
+    enablerepo: powertools
+    state: present
