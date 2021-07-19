@@ -1,0 +1,40 @@
+---
+- name: Install sanoid for Redhat
+  include: install_Redhat.yml
+  when: ansible_distribution  == 'Redhat'
+
+- name: Install sanoid for Redhat
+  include: install_Debian.yml
+  when: ansible_distribution  == 'Debian'
+
+- name: Create /etc/sanoid
+  file:
+    path: /etc/sanoid
+    state: directory
+   
+- name: copy sanoid.conf file
+  copy:
+    src: files/sanoid/sanoid.conf
+    dest: /etc/sanoid/sanoid.conf
+
+- name: copy sanoid systemd files
+  loop:
+    - sanoid.service
+    - sanoid-prune.service
+    - sanoid.timer
+  copy:
+    src: files/sanoid/{{ item }}
+    dest: /etc/systemd/system
+
+- name: enable and start sanoid-prune
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: sanoid-prune
+    
+- name: enable and start sanoid.timer
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: sanoid.timer
