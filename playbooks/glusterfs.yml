@@ -1,5 +1,12 @@
 ---
-- name: install glusterfs-fuse
+- name: install glusterfs client Redhat
   package:
     name: glusterfs-fuse
     state: present
+  when: ansible_distribution  == 'Redhat'
+
+- name: install glusterfs client Debian
+  package:
+    name: glusterfs-client
+    state: present
+  when: ansible_distribution  == 'Debian'
