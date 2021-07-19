@@ -6,10 +6,18 @@
     line: deb http://http.us.debian.org/debian/ testing non-free contrib main
   when: ansible_distribution  == 'Debian'
 
+- name: install podman | Debian
+  apt:
+    name: podman
+    update_cache: yes
+    state: present
+  when: ansible_distribution  == 'Debian'
+
 - name: install podman
   package:
     name: podman
     state: present
+  when: ansible_distribution  != 'Debian'
 
 - name: deploy containers
   loop: "{{ PodmanContainers }}"
