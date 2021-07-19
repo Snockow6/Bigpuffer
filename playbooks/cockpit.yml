@@ -15,3 +15,4 @@
     service: cockpit
     permanent: yes
     state: enabled
+  when: ansible_distribution  == 'Redhat'
