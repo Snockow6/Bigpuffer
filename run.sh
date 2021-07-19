@@ -9,13 +9,13 @@ fi
 
 echo "make sure external ansible modules are installed"
 # if directory doesnt exist download ansible collection posix
-if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix"] 
+if [ ! -d "~/.ansible/collections/ansible_collections/ansible/posix/" ];
 then
   ansible-galaxy collection install ansible.posix
 fi
 
 # if directory doesnt exist download ansible collection general
-if [ ! -d "~/.ansible/collections/ansible_collections/community/general/"]
+if [ ! -d "~/.ansible/collections/ansible_collections/community/general/" ];
 then 
   ansible-galaxy collection install community.general
 fi 
