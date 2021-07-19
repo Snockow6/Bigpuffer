@@ -1,0 +1,10 @@
+---
+- name: playbook to configure bigpuffer server
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: update linux
+      include: playbooks/update-linux.yml 
+    
+    - include: playbooks/sanoid/sanoid.yml
