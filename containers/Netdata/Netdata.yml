@@ -37,9 +37,3 @@
     enabled: yes
     name: "container-{{ item }}"
   when: state.changed == false
-
-- name: allow 19999/tcp on firewalld
-  ansible.posix.firewalld:
-    port: 19999/tcp
-    permanent: yes
-    state: enabled

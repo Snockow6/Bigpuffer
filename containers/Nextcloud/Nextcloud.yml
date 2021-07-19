@@ -52,10 +52,3 @@
     enabled: yes
     name: "pod-{{ item }}"
   when: state.changed == false
-
-- name: allow 8443/tcp on firewalld
-  ansible.posix.firewalld:
-    port: 8443/tcp
-    immediate: yes
-    permanent: yes
-    state: enabled
