@@ -4,14 +4,31 @@
     name: samba
     state: present
 
-- name: start and enable smb
+
+- name: start and enable smb | Debian
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: smbd
+  when: ansible_distribution  == 'Debian'
+
+- name: start and enable nmb | Debian
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: nmbd
+  when: ansible_distribution  == 'Debian'
+
+- name: start and enable smb | Redhat
   ansible.builtin.systemd:
     state: started
     enabled: yes
     name: smb
+  when: ansible_distribution  == 'Redhat'
 
-- name: start and enable nmb
+- name: start and enable nmb | Redhat
   ansible.builtin.systemd:
     state: started
     enabled: yes
     name: nmb
+  when: ansible_distribution  == 'Redhat'
