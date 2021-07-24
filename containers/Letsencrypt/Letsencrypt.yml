@@ -1,8 +1,4 @@
 ---
-- name: Create a podman network
-  containers.podman.podman_network:
-    name: Lets_encrypt
-
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
@@ -18,13 +14,11 @@
       PGID="{{ GroupID }}"
       TZ="{{ TimeZone }}"
       URL="shedinternet.net"
-      SUBDOMAINS="www,cloud,tv"
+      SUBDOMAINS="www,cloud,tv,git"
       VALIDATION="dns"
       DNSPLUGIN="cloudflare"
     volume:
       - "/Container/{{ item }}/config:/config:rw"
-    network:
-      - Lets_encrypt
   register: state
 
 - name: Make {{ item }} Systemd service

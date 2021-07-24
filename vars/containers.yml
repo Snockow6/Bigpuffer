@@ -5,19 +5,20 @@ ContainerLogs: /Container/logs
 ContainerCache: /mnt/Gamma/Cache
 
 PodmanContainers:
-  #- Letsencrypt
-  - Jellyfin
-  - Netbootxyz
-  - Heimdall
+  - Letsencrypt
+  - Gitea
+  #- Jellyfin
+  #- Netbootxyz
+  #- Heimdall
   #- Pihole
   #- Netdata
-  - Jackett
-  - Qbittorrent
-  - Wordpress
-  - Sonarr
-  - Podget
-  - Lancache
-  - Nextcloud
+  #- Jackett
+  #- Qbittorrent
+  #- Wordpress
+  #- Sonarr
+  #- Podget
+  #- Lancache
+  #- Nextcloud
   #- Netbox-community
   #- Gitlab
 
