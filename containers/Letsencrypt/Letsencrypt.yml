@@ -1,7 +1,4 @@
 ---
-- name: Create a podman network
-  containers.podman.podman_network:
-    name: Lets_encrypt
 
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
@@ -22,9 +19,7 @@
       VALIDATION="dns"
       DNSPLUGIN="cloudflare"
     volume:
-      - "/Container/{{ item }}/config:/config:rw"
-    network:
-      - Lets_encrypt
+      - "/Container/{{ item }}/config:/config:Z,rw"
   register: state
 
 - name: Make {{ item }} Systemd service
