@@ -1,10 +1,12 @@
 ---
 servers:
   hosts:
+    #192.168.10.108:
+
     bigpuffer.shed.lan:
-      vars:
-        hostname: bigpuffer.shed.lan
-        ipaddrss: 192.168.10.2
+      #vars:
+        #hostname: bigpuffer.shed.lan
+        #ipaddrss: 192.168.10.2
   vars:
     ansible_user: nathan
     ansible_become_password: !vault |

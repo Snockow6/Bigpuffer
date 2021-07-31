@@ -1,5 +1,4 @@
 ---
-
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
@@ -15,7 +14,7 @@
       PGID="{{ GroupID }}"
       TZ="{{ TimeZone }}"
       URL="shedinternet.net"
-      SUBDOMAINS="www,cloud,tv"
+      SUBDOMAINS="www,cloud,tv,git"
       VALIDATION="dns"
       DNSPLUGIN="cloudflare"
     volume:
