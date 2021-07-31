@@ -13,7 +13,7 @@
       PGID="{{ UserID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
+      - "/Container/{{ item }}/config:/config:Z,rw"
       - "{{ ContainerCache }}/Sonarr:/downloads:z,rw"
   register: state
 

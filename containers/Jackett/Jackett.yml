@@ -10,8 +10,8 @@
       PUID="{{ UserID }}"
       TZ="{{ TimeZone}}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
-      - "{{ ContainerData }}/{{ item }}/downloads:/downloads:rw"
+      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "/Container/{{ item }}/downloads:/downloads:Z,rw"
   register: state
   
 - name: Make {{ item }} Systemd service

@@ -1,17 +1,9 @@
 ---
-- name: Add testing repositorys for Debian 10
-  ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list
+- name: install podman
+  package:
+    name: cockpit-podman
     state: present
-    line: deb http://http.us.debian.org/debian/ testing non-free contrib main
-  when: ansible_distribution  == 'Debian'
-
-- name: install podman | Debian
-  apt:
-    name: podman
-    update_cache: yes
-    state: present
-  when: ansible_distribution  == 'Debian'
+  when: ansible_distribution  != 'Debian'
 
 - name: install podman
   package:

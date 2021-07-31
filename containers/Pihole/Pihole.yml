@@ -26,7 +26,7 @@
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
-    image: pihole/pihole:latest
+    image: docker.io/pihole/pihole:latest
     hostname: "{{ item }}"
     cap_add:
       - NET_ADMIN
@@ -42,8 +42,8 @@
       DNS1="{{ lancacheIP }}"
       ServerIP="{{ PiholeIP }}"
     volume:
-      - "/Container/{{ item }}/config:/etc/pihole/:rw"
-      - "/Container/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:rw"
+      - "/Container/{{ item }}/config:/etc/pihole/:Z,rw"
+      - "/Container/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:Z,rw"
   register: state
 
 #podman generate systemd --files --name Wordpress 

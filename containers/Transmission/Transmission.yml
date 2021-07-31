@@ -14,8 +14,8 @@
       USER="{{ Sonarr_User }}"
       PASS="{{ Sonarr_Password }}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/config:Z"
-      - "{{ ContainerCache }}/Sonarr:/downloads:Z"
+      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "/mnt/Gamma/Cache/Sonarr:/downloads:z,rw"
 
   register: state
 

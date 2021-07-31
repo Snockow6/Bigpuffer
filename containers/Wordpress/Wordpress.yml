@@ -5,6 +5,7 @@
     state: started
     ports:
       - 8082:80/tcp
+      
 #################################################################
 # Create Wordpress db 
 ##################################################################
@@ -20,7 +21,7 @@
       MYSQL_PASSWORD="{{ Sonarr_Password }}"
       MYSQL_RANDOM_ROOT_PASSWORD="1"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}_db:/var/lib/mysql:rw"
+      - "/Container/{{ item }}/db:/var/lib/mysql:Z,rw"
 
   register: state
 
@@ -39,7 +40,7 @@
       WORDPRESS_DB_PASSWORD="{{ Sonarr_Password }}"
       WORDPRESS_DB_NAME="{{ item }}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}_app:/var/www/html:rw"
+      - "/Container/{{ item }}/app:/var/www/html:Z,rw"
 
 - name: Make {{ item }} Systemd service
   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}

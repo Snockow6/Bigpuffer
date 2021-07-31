@@ -12,8 +12,8 @@
       USER="{{ Sonarr_User }}"
       PASS="{{ Sonarr_Password }}"
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/config:rw" # locks to only this container
-      - "{{ ContainerCache }}/{{ item }}:/downloads:rw" # Share with any Container
+      - "/Container/{{ item }}/config:/config:Z,rw" # locks to only this container
+      - "{{ ContainerCache }}/{{ item }}:/downloads:Z,rw" # Share with any Container
       - "{{ Anime }}:/anime:rw"
   register: state
 

@@ -10,8 +10,10 @@
     ports:
       - 8096:8096
     volume:
-      - "{{ ContainerLogs }}/{{ item }}:/config/log:rw"
-      - "{{ ContainerConfigs }}/{{ item }}:/config:rw"
+      - "/Container/{{ item }}/logs:/config/log:Z,rw"
+      - "/mnt/Gamma/Cache/Jellyfin/cache:/config/cache:z,rw"
+      - "/mnt/Gamma/Cache/Jellyfin/transcodes:/config/data/transcodes:z,rw"
+      - "/Container/{{ item }}/config:/config:Z,rw"
       - "{{ Podcasts }}:/data/Podcasts:z,ro"
       - "{{ Youtubevids }}:/data/YoutubeVids:z,ro"
       - "{{ Music }}:/data/Music:z,ro"

@@ -18,8 +18,8 @@
       PGID="{{ GroupID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "/Container/{{ item }}/app:/config:rw"
-      - "/Container/{{ item }}/data:/data:rw"
+      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "/Container/{{ item }}/data:/data:Z,rw"
 
 - name: Create {{ item }}_db Podman Container
   containers.podman.podman_container:
@@ -32,7 +32,7 @@
       MYSQL_USER: "{{ item }}"
       MYSQL_PASSWORD: "{{ Sonarr_Password }}"
     volumes:
-      - "/Container/{{ item }}/db:/var/lib/mysql:rw"
+      - "/Container/{{ item }}/db:/var/lib/mysql:Z,rw"
 
 - name: Make {{ item }} Systemd service
   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
