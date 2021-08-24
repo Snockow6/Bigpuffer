@@ -1,0 +1,39 @@
+---
+- name: create nebula install directory
+  file:
+    path: /opt/nebula
+    state: directory
+
+- name: download and unzip nebula
+  ansible.builtin.unarchive:
+    src: https://github.com/slackhq/nebula/releases/download/v1.4.0/nebula-linux-amd64.tar.gz
+    dest: /opt/nebula
+    owner: root
+    group: root
+    remote_src: yes
+
+- name: copy nebula files
+  loop:
+    - Bigpuffer.crt
+    - Bigpuffer.key
+    - ca.crt
+    - config.yml
+  ansible.builtin.copy:
+    src: "files/nebula/{{ item }}"
+    dest: "/opt/nebula/{{ item }}"
+    owner: root
+    group: root
+
+- name: copy nebula systemd service
+  ansible.builtin.copy:
+    src: "files/nebula/nebula.service"
+    dest: "/etc/systemd/system/nebula.service"
+    owner: root
+    group: root
+
+- name: start nebula service if change
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "nebula"
