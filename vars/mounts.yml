@@ -15,7 +15,7 @@ create_mounts:
     state: present
 
   - name: "Containers"
-    mountpoint: "/Container"
+    mountpoint: "/Containers"
     type: "nfs"
     opts: "rw,sync,hard"
     src: "bikinibodhi:/Guardian/Containers"
