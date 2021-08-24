@@ -9,8 +9,6 @@
       PUID="{{ UserID }}"
       PGID="{{ UserID }}"
       TZ="{{ TimeZone }}"
-      USER="{{ Sonarr_User }}"
-      PASS="{{ Sonarr_Password }}"
     volume:
       - "/Container/{{ item }}/config:/config:Z,rw" # locks to only this container
       - "{{ ContainerCache }}/{{ item }}:/downloads:Z,rw" # Share with any Container
