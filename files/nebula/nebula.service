@@ -1,0 +1,7 @@
+[Unit]
+Description=Start Nebula Mesh VPN as a service.
+[Service]
+Type=simple
+ExecStart=/opt/nebula/nebula -config /opt/nebula/config.yml
+[Install]
+WantedBy=multi-user.target
