@@ -2,19 +2,17 @@
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
-    image: ghcr.io/linuxserver/letsencrypt
+    image: ghcr.io/linuxserver/swag:latest
     cap_add:
       - NET_ADMIN
-    state: present
     ports:
       - 9443:443
-      - 9080:80
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
       TZ="{{ TimeZone }}"
       URL="shedinternet.net"
-      SUBDOMAINS="www,cloud,tv,git"
+      SUBDOMAINS="www,cloud,tv,git,code-server"
       VALIDATION="dns"
       DNSPLUGIN="cloudflare"
     volume:
