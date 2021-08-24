@@ -5,13 +5,19 @@
     enabled: no
     name: "systemd-resolved"
 
-- name: Copy Resolv config file
-  ansible.builtin.copy:
-    src: resolv.conf
-    dest: /etc/resolv.conf
-    owner: root
-    group: root
-    mode: '0755'
+- name: unmask resolv.conf 
+  file:
+    mode: umask
+    path: /etc/resolv.conf
+  register: resolv
+
+- name: restart NetworkManager to generate Resolv conf
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "NetworkManager"
+  when: resolv.changed == true
 
 - name: Create {{ item }} config folder
   file:
