@@ -3,7 +3,7 @@ servers:
   hosts:
     #192.168.10.108:
 
-    bigpuffer.shed.lan:
+    bigpuffer:
       #vars:
         #hostname: bigpuffer.shed.lan
         #ipaddrss: 192.168.10.2
