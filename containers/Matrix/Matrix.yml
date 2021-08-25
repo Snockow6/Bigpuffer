@@ -1,44 +1,29 @@
 ---
-- name: Make "{{ item }}" Systemd service
-  copy:
-    dest: "/etc/systemd/system/{{ item }}.service"
-    content: |
-      [Unit]
-      Description=Run {{ item }}
-      After=network-online.target
-      Wants=network-online.target
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/matrixdotorg/synapse:latest
+    ports:
+      - "8008:8008"
+    volume:
+      - "/Container/{{ item }}/config:/config:Z,rw"
+  register: state
 
-      [Service]
-      ExecStartPre=-/usr/bin/podman kill {{ item }}
-      ExecStartPre=-/usr/bin/podman rm {{ item }}
-      ExecStartPre=-/usr/bin/podman pull docker.io/matrixdotorg/synapse:latest
-      ExecStart=/usr/bin/podman run \
-      --name {{ item }} \
-      --volume {{ ContainerConfigs }}/{{ item }}:/data:rw \
-      -p 8008:8008 \
-      docker.io/matrixdotorg/synapse:latest
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
 
-      ExecStop=/usr/bin/podman stop {{ item }}
-
-      [Install]
-      WantedBy=multi-user.target
-  register: Matrix_State
-
-- name: reload systemd
-  command: >-
-    systemctl daemon-reload
-  when: Matrix_State.changed == true
-
-- name: restart "{{ item }}" service if changed
+- name: restart {{ item }} service if change
   ansible.builtin.systemd:
     state: restarted
+    daemon_reload: yes
     enabled: yes
-    name: "{{ item }}"
-  when: Matrix_State.changed == true
+    name: "container-{{ item }}"
+  when: state.changed == true
 
-- name: Start "{{ item }}" service
+- name: Start {{ item }} service
   ansible.builtin.systemd:
     state: started
     enabled: yes
-    name: "{{ item }}"
-  when: Matrix_State.changed == false
+    name: "container-{{ item }}"
+  when: state.changed == false
