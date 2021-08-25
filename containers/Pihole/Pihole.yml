@@ -45,7 +45,8 @@
       DNSMASQ_USER=root
       TZ="{{ TimeZone }}"
       WEBPASSWORD="{{ Sonarr_Password }}"
-      DNS1="{{ lancacheIP }}"
+      DNS2="{{ lancacheIP }}"
+      DNS1="192.168.10.5"
       ServerIP="{{ PiholeIP }}"
     volume:
       - "/Container/{{ item }}/config:/etc/pihole/:Z,rw"
