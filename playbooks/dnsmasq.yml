@@ -6,7 +6,7 @@
 
 - name: Copy dnsmasq config file
   ansible.builtin.copy:
-    src: files/dnsmasq.conf
+    src: files/dnsmasq/dnsmasq.conf
     dest: /etc/dnsmasq.conf
     owner: root
     group: dnsmasq
