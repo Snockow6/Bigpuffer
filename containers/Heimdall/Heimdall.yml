@@ -4,7 +4,7 @@
     name: "{{ item }}"
     image: ghcr.io/linuxserver/heimdall:latest
     ports:
-      - 4443:443
+      - 1443:443
     env:
       PUID="{{ UserID }}"
       PGID="{{ UserID }}"
