@@ -11,7 +11,22 @@
     owner: root
     group: dnsmasq
     mode: '0644'
+  register: state
 
+- name: restart dnsmasq service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "dnsmasq"
+  when: state.changed == true
+
+- name: Start dnsmasq service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "dnsmasq"
+  when: state.changed == false
   
 - name: start and enable dnsmasq
   ansible.builtin.systemd:
