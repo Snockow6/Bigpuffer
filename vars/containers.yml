@@ -8,7 +8,8 @@ PodmanContainers:
   - Letsencrypt
   - Jellyfin
   #- Netbootxyz
-  #- Heimdall
+  - Heimdall
+  - Matrix
   - Pihole
   #- Netdata
   - Jackett
