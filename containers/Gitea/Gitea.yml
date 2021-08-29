@@ -8,11 +8,13 @@
       - "2224:22"
   register: state
 
-- name: Create {{ item }}-app Podman Container
+- name: Create {{ item }}_app Podman Container
   containers.podman.podman_container:
     name: "{{ item }}_app"
     pod: "{{ item }}"
     image: docker.io/gitea/gitea:1.14.5
+    security_opt:
+      label=type:Gitea_app.process
     env:
       USER="Snockow6"
       USER_UID="{{ UserID }}"
@@ -30,6 +32,8 @@
     name: "{{ item }}_db"
     pod: "{{ item }}"
     image: docker.io/library/mysql:8
+    security_opt:
+      label=type:Gitea_db.process
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="yes"
       MYSQL_USER="{{ item }}"

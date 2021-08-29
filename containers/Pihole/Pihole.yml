@@ -34,6 +34,8 @@
     name: "{{ item }}"
     image: docker.io/pihole/pihole:latest
     hostname: "{{ item }}"
+    security_opt:
+      label=type:Pihole.process
     cap_add:
       - NET_ADMIN
       - NET_RAW

@@ -3,6 +3,8 @@
   containers.podman.podman_container:
     name: "{{ item }}"
     image: ghcr.io/linuxserver/jackett:latest
+    security_opt:
+      label=type:Jackett.process
     ports:
       - 9117:9117
     env:

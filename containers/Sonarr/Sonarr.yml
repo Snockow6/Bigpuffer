@@ -11,7 +11,7 @@
       TZ="{{ TimeZone }}"
     volume:
       - "/Container/{{ item }}/config:/config:Z,rw" # locks to only this container
-      - "{{ ContainerCache }}/{{ item }}:/downloads:Z,rw" # Share with any Container
+      - "{{ ContainerCache }}/{{ item }}:/downloads:z,rw" # Share with any Container
       - "{{ Anime }}:/anime:rw"
   register: state
 

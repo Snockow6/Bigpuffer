@@ -13,8 +13,8 @@
       PGID="{{ UserID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
-      - "{{ ContainerCache }}/Sonarr:/downloads:z,rw"
+      - "/Container/{{ item }}/config:/config:Z,rw" # private to this container
+      - "{{ ContainerCache }}/Sonarr:/downloads:z,rw" # shared for other containers
   register: state
 
 #podman generate systemd --files --name Wordpress 

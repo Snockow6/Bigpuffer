@@ -15,6 +15,8 @@
     name: "{{ item }}_db"
     pod: "{{ item }}"
     image: docker.io/library/mysql:5.7
+    security_opt:
+      label=type:Wordpress_db.process
     env:
       MYSQL_DATABASE="{{ item }}"
       MYSQL_USER="{{ item }}"
@@ -34,6 +36,8 @@
     name: "{{ item }}_app"
     pod: "{{ item }}"
     image: docker.io/library/wordpress:latest
+    security_opt:
+      label=type:Wordpress_app.process
     env:
       WORDPRESS_DB_HOST="{{ item }}_db"
       WORDPRESS_DB_USER="{{ item }}"

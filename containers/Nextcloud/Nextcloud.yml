@@ -13,6 +13,8 @@
     pod: Nextcloud
     image: ghcr.io/linuxserver/nextcloud
     state: present
+    security_opt:
+      label=type:Nextcloud_app.process
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
@@ -26,6 +28,8 @@
     name: "{{ item }}_db"
     image: docker.io/mysql:8
     pod: Nextcloud
+    security_opt:
+      label=type:Nextcloud_db.process
     env:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       MYSQL_DATABASE: "{{ item }}"
