@@ -1,28 +1,29 @@
 ---
-ContainerConfigs: /Container/config
-ContainerData: /Container/data
-ContainerLogs: /Container/logs
-ContainerCache: /mnt/Gamma/Cache
+#ContainerConfigs: /Container/config
+ContainerData: /Containers
+#ContainerLogs: /Container/logs
+#ContainerCache: /mnt/Gamma/Cache
 
 PodmanContainers:
-  - Letsencrypt
+  #- Letsencrypt
+  - Tdarr
   - Jellyfin
   #- Netbootxyz
   - Heimdall
-  - Matrix
-  - Pihole
+  #- Matrix
+  #- Pihole
   #- Netdata
   - Jackett
-  - Qbittorrent
-  #- Transmission
-  - Wordpress
+  #- Qbittorrent
+  - Transmission
+  #- Wordpress
   - Sonarr
   #- Podget
-  - Lancache
-  - Nextcloud
+  #- Lancache
+  #- Nextcloud
   #- VSCode
   #- Netbox-community
-  #- Gitlab
+  #- Gitea
 
 #Linuxserver.io vars
 UserID: 101009 # abc user
@@ -47,19 +48,20 @@ VSCode_SUDO_PASSWORD: !vault |
 
 
 #Lancache vars
-lancacheIP: "192.168.10.2"
+#lancacheIP: "192.168.10.2"
 
 #Pihole vars
-PiholeIP: "192.168.10.6"
+#PiholeIP: "192.168.10.6"
 
 #Jellyfin vars
-Youtubevids: "/mnt/Gamma/YoutubeVids"
-Podcasts: "/mnt/Gamma/Podcasts"
-Music: "/mnt/Gamma/Music"
+#Youtubevids: "/mnt/Gamma/YoutubeVids"
+#Podcasts: "/mnt/Gamma/Podcasts"
+#Music: "/mnt/Gamma/Music"
 
 #Sonarr vars
-Anime: "/nfs/Anime"
-Tvshows: "/nfs/Tvshows"
+Anime: "/media/Anime"
+TV: "/media/TV"
+#Tvshows: "/nfs/Tvshows"
 Sonarr_User: localadmin
 Sonarr_Password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
