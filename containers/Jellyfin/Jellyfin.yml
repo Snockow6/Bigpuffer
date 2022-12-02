@@ -1,32 +1,41 @@
 ---
-- name: Create {{ item }} Podman Container
-  containers.podman.podman_container:
-    name: "{{ item }}"
-    image: ghcr.io/linuxserver/jellyfin:latest
-    state: created
-    device:
-      - "/dev/dri/renderD128:/dev/dri/renderD128:rw"
-      - "/dev/dri/card0:/dev/dri/card0:rw"
-    ports:
-      - 8096:8096
-    volume:
-      - "/Container/{{ item }}/logs:/config/log:Z,rw"
-      - "/mnt/Gamma/Cache/Jellyfin/cache:/config/cache:z,rw"
-      - "/mnt/Gamma/Cache/Jellyfin/transcodes:/config/data/transcodes:z,rw"
-      - "/Container/{{ item }}/config:/config:Z,rw"
-      - "{{ Podcasts }}:/data/Podcasts:z,ro"
-      - "{{ Youtubevids }}:/data/YoutubeVids:z,ro"
-      - "{{ Music }}:/data/Music:z,ro"
-      - "{{ Anime }}:/data/Anime:ro"
-    env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
-  register: state
+- name: Pull an image {{ item }}
+  containers.podman.podman_image:
+    name: ghcr.io/linuxserver/jellyfin:latest
 
-- name: Make {{ item }} Systemd service
-  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-  when: state.changed == true
+- name: Make "{{ item }}" Systemd service
+  copy:
+    dest: "/etc/systemd/system/container-{{ item }}.service"
+    content: |
+      [Unit]
+      Description={{ item }} container
+      After=multi-user.target
+      Wants=multi-user.target, network-online.target
+      RequiresMountsFor={{ ContainerData }}/{{ item }}, {{ Anime }}, /run/containers/storage
+
+
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/podman kill {{ item }}
+      ExecStartPre=-/usr/bin/podman rm {{ item }}
+      ExecStartPre=-/usr/bin/podman pull ghcr.io/linuxserver/jellyfin:latest
+      ExecStart=/usr/bin/podman run \
+      --name {{ item }} \
+      --security-opt label=type:Jellyfin.process \
+      -e PUID="{{ UserID }}" \
+      -e PGID="{{ GroupID }}" \
+      -e TZ="{{ TimeZone }}" \
+      -v "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw" \
+      -v "{{ Anime }}:/Anime:rw" \
+      -v "{{ TV }}:/TV:rw" \
+      -p 8096:8096 \
+      ghcr.io/linuxserver/jellyfin:latest
+
+      ExecStop=/usr/bin/podman stop {{ item }}
+
+      [Install]
+      WantedBy=multi-user.target
+  register: state
 
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
