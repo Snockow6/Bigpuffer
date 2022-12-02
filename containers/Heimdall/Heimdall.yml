@@ -3,21 +3,24 @@
   containers.podman.podman_container:
     name: "{{ item }}"
     image: ghcr.io/linuxserver/heimdall:latest
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
     ports:
       - 4443:443
-    security_opt:
-      label=type:Heimdall.process
     env:
       PUID="{{ UserID }}"
       PGID="{{ UserID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw"
   register: state
 
-- name: Make {{ item }} Systemd service
-  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-  when: state.changed == true
+# - name: Make {{ item }} Systemd service
+#   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+#   when: state.changed == true
 
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
