@@ -1,24 +1,39 @@
 ---
-- name: Create {{ item }} Podman Container
-  containers.podman.podman_container:
-    name: "{{ item }}"
-    image: ghcr.io/linuxserver/jackett:latest
-    security_opt:
-      label=type:Jackett.process
-    ports:
-      - 9117:9117
-    env:
-      PGID="{{ GroupID }}"
-      PUID="{{ UserID }}"
-      TZ="{{ TimeZone}}"
-    volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
-      - "/Container/{{ item }}/downloads:/downloads:Z,rw"
+- name: Pull an image {{ item }}
+  containers.podman.podman_image:
+    name: ghcr.io/linuxserver/jackett:latest
+
+- name: Make "{{ item }}" Systemd service
+  copy:
+    dest: "/etc/systemd/system/container-{{ item }}.service"
+    content: |
+      [Unit]
+      Description={{ item }} container
+      After=multi-user.target
+      Wants=multi-user.target, network-online.target
+      RequiresMountsFor={{ ContainerData }}/{{ item }}, /run/containers/storage
+
+
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/podman kill {{ item }}
+      ExecStartPre=-/usr/bin/podman rm {{ item }}
+      ExecStartPre=-/usr/bin/podman pull ghcr.io/linuxserver/jackett:latest
+      ExecStart=/usr/bin/podman run \
+      --name {{ item }} \
+      -e PUID="{{ UserID }}" \
+      -e PGID="{{ GroupID }}" \
+      -e TZ="{{ TimeZone }}" \
+      -v "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw" \
+      -v "/{{ ContainerData }}/{{ item }}/Downloads:/downloads:z" \
+      -p 9117:9117 \
+      ghcr.io/linuxserver/jackett:latest
+
+      ExecStop=/usr/bin/podman stop {{ item }}
+
+      [Install]
+      WantedBy=multi-user.target
   register: state
-  
-- name: Make {{ item }} Systemd service
-  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-  when: state.changed == true
 
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
