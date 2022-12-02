@@ -9,41 +9,41 @@
     - vars/mounts.yml
 
   tasks:
-    - name: update linux
-      include: playbooks/update-linux.yml
+    # - name: update linux
+    #   include_tasks: playbooks/update-linux.yml
 
     - name: add groups
-      include: playbooks/create-group.yml
+      include_tasks: playbooks/create-group.yml
 
     - name: add users
-      include: playbooks/create-user.yml
+      include_tasks: playbooks/create-user.yml
     
-    - name: install and configure dnsmasq
-      include: playbooks/dnsmasq.yml
+#    - name: install and configure dnsmasq
+#      include_tasks: playbooks/dnsmasq.yml
 
-    - name: install and enable samba
-      include: playbooks/samba.yml
+#    - name: install and enable samba
+#      include_tasks: playbooks/samba.yml
 
-    - name: install and enable nfs server
-      include: playbooks/nfs-server.yml
+#    - name: install and enable nfs server
+#      include_tasks: playbooks/nfs-server.yml
 
-    - name: install and enable glusterfs
-      include: playbooks/glusterfs.yml
+#    - name: install and enable glusterfs
+#      include_tasks: playbooks/glusterfs.yml
     
-    - name: add mounts to fstab and mount it
-      include: playbooks/mount/mount.yml
+#    - name: add mounts to fstab and mount it
+#      include_tasks: playbooks/mount/mount.yml
 
-    - name: install and enable cockpit
-      include: playbooks/cockpit.yml
+#    - name: install and enable cockpit
+#      include_tasks: playbooks/cockpit.yml
     
-    #- name: install and enable nebula
-    #  include: playbooks/nebula.yml
+#    - name: install and enable nebula
+#      include_tasks: playbooks/nebula.yml
 
     #- name: install and load openzfs
-    #  include: playbooks/open-zfs-install.yml
+      #include_tasks: playbooks/open-zfs-install.yml
 
     #- name: add cockpit zfs manager
-    #  include: playbooks/cockpit-zfs-manager.yml
+    #  include_tasks: playbooks/cockpit-zfs-manager.yml
 
     - name: run containers
-      include: containers/Containers_main.yml
+      include_tasks: containers/Containers_main.yml
