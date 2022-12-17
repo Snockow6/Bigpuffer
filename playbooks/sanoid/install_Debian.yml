@@ -1,5 +1,5 @@
 ---
-- name: "install debhelper libcapture-tiny-perl libconfig-inifiles-perl pv lzop mbuffer build-essential git"
+- name: "install debhelper libcapture-tiny-perl libconfig-inifiles-perl pv lzop mbuffer build-essential git Debian"
   package:
     name:
       - debhelper
@@ -12,18 +12,3 @@
       - git
     state: present
 
-- name: git clone sanoid
-  ansible.builtin.git:
-    repo: https://github.com/jimsalterjrs/sanoid.git
-    dest: /tmp/sanoid
-
-- name: copy sanoid files
-  copy:
-    src: /tmp/sanoid/{{ item }} 
-    dest: /usr/local/sbin
-    remote_src: yes
-  loop: 
-    - sanoid
-    - syncoid
-    - findoid
-    - sleepymutex

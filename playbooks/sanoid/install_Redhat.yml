@@ -1,5 +1,5 @@
 ---
-- name: "install epel-release, git and dnf-plugins-core"
+- name: "install epel-release, git and dnf-plugins-core Redhat"
   package:
     name:
       - epel-release
@@ -7,23 +7,19 @@
       - dnf-plugins-core
     state: present
 
-- name: add powertools
+- name: "install perl, mbuffer and pv Redhat"
+  package:
+    name:
+      - perl-Config-IniFiles
+      - perl-Data-Dumper
+      - perl-Capture-Tiny 
+      - lzop 
+      - mbuffer
+      - mhash
+      - pv
+    state: present
+
+- name: add powertools Redhat
   dnf:
     enablerepo: powertools
     state: present
-
-- name: git clone sanoid
-  ansible.builtin.git:
-    repo: https://github.com/jimsalterjrs/sanoid.git
-    dest: /tmp/sanoid
-
-- name: copy sanoid files
-  copy:
-    src: /tmp/sanoid/{{ item }} 
-    dest: /usr/local/sbin
-    remote_src: yes
-  loop: 
-    - sanoid
-    - syncoid
-    - findoid
-    - sleepymutex
