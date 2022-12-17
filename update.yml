@@ -1,0 +1,10 @@
+---
+- name: playbook to configure bigpuffer server
+  hosts: 
+    - gateway
+    - bigpuffer
+  become: yes ## need to change should be defined in running playbooks/roles
+
+  tasks:
+    - name: update linux
+      include_tasks: playbooks/update-linux.yml
