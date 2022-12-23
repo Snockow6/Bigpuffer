@@ -33,6 +33,11 @@
     src: files/sanoid/sanoid.conf
     dest: /etc/sanoid/sanoid.conf
 
+- name: copy sanoid.defaults.conf file
+  copy:
+    src: files/sanoid/sanoid.defaults.conf
+    dest: /etc/sanoid/sanoid.defaults.conf
+
 - name: copy sanoid systemd files
   loop:
     - sanoid.service
