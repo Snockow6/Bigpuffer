@@ -1,0 +1,71 @@
+---
+# tasks file for kvm_setup
+- name: install kvm
+  package:
+    name: 
+     - libvirt-daemon-kvm
+     - python3-libvirt
+     - python3-lxml
+    state: present
+
+- name: Start libvirtd.service service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "libvirtd.service"
+
+# - name: add user to libvirt
+#   user:
+#     name: nathan
+#     append: true
+#     groups: "libvirt"
+
+- name: Install bottle python package
+  ansible.builtin.pip:
+    name: libvirt-python
+
+- name: List available pools
+  community.libvirt.virt_pool:
+    command: list_pools
+  register: existing_pools
+  changed_when: no
+
+- name: Create Default Storage if not exits
+  block:
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: "{{ kvm_pool_target }}/{{ kvm_pool_name }}"
+      state: directory
+      mode: '0711'
+
+  - name: Allow virsh access to {{ kvm_pool_name }}
+    community.general.sefcontext:
+      target: '{{ kvm_pool_target }}/{{ kvm_pool_name }}(/.*)?'
+      setype: virt_var_lib_t
+      state: present
+    
+  - name: Configure {{ kvm_pool_name }} storage ## find better way to execute other than command
+    command: |
+      virsh pool-define-as {{ kvm_pool_name }} {{ kvm_pool_type }} \
+      --source-path {{ kvm_pool_source }} --target {{ kvm_pool_source }}
+  
+  - name: Build a {{ kvm_pool_name }} pool if it does not exist
+    community.libvirt.virt_pool:
+      command: build
+      name: "{{ kvm_pool_name }}"
+
+  - name: Start {{ kvm_pool_name }} pool
+    community.libvirt.virt_pool:
+      command: create
+      name: "{{ kvm_pool_name }}"
+  
+  - name: Ensure {{ kvm_pool_name }} will be started at boot
+    community.libvirt.virt_pool:
+      autostart: yes
+      name: "{{ kvm_pool_name }}"
+
+  when: "kvm_pool_name not in existing_pools.list_pools"
+
+- debug:
+    msg: "{{ existing_pools }}"
+

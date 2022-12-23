@@ -1,0 +1,6 @@
+---
+# defaults file for kvm_setup
+kvm_pool_name: images
+kvm_pool_type: dir
+kvm_pool_target: "/var/lib/libvirt/{{ kvm_pool_name }}"
+kvm_pool_source: "/var/lib/libvirt/{{ kvm_pool_name }}"
