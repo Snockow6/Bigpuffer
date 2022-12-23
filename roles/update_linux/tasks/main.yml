@@ -1,0 +1,13 @@
+---
+# tasks file for update_linux
+- name: update all current packages
+  package:
+    name: "*"
+    state: latest
+    
+- name: install python3 and pip3
+  package:
+    name: 
+      - python3
+      - python3-pip
+    state: present
