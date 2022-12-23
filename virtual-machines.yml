@@ -1,0 +1,38 @@
+---
+- name: playbook to install and configure server with kvm
+  hosts:
+    - bikinibodhi
+  gather_facts: yes
+  become: yes
+  vars:
+    pool_dir: "/var/lib/libvirt/images"
+    vm: CS9-lab01
+    vcpus: 2
+    ram_mb: 2048
+    cleanup: no
+    net: default
+    ssh_pub_key: "/home/nathan/.ssh/id_rsa.pub" ## file from local virt host  
+    base_image_url: https://cloud.centos.org/centos/9-stream/x86_64/images/{{ base_image_name }}
+    base_image_name: CentOS-Stream-GenericCloud-9-20210830.0.x86_64.qcow2
+    base_image_sha: 99df867be3300ba5292e274acd149dac1dc784f9db4c30bdf8e3c89abd639976
+
+  tasks:
+    - name: update linux
+      include_role:
+        name: update_linux
+        
+    - name: KVM setup role
+      include_role:
+        name: kvm_setup
+
+    - name: KVM Provision role
+      include_role:
+        name: kvm_provision
+      vars:
+        libvirt_pool_dir: "{{ pool_dir }}"
+        vm_name: "{{ vm }}"
+        vm_vcpus: "{{ vcpus }}"
+        vm_ram_mb: "{{ ram_mb }}"
+        vm_net: "{{ net }}"
+        cleanup_tmp: "{{ cleanup }}"
+        ssh_key: "{{ ssh_pub_key }}"
