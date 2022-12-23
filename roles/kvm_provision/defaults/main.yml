@@ -1,0 +1,19 @@
+---
+# defaults file for kvm_provision
+base_image_name: Fedora-Cloud-Base-37-1.7.x86_64.qcow2
+base_image_url: https://download.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/{{ base_image_name }}
+base_image_sha: b5b9bec91eee65489a5745f6ee620573b23337cbb1eb4501ce200b157a01f3a0
+libvirt_pool_dir: "/var/lib/libvirt/images"
+vm_name: f34-dev
+vm_vcpus: 2
+vm_ram_mb: 2048
+vm_net: default
+vm_root_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39383463663539646637383664323063643764663030316233643832653562343336326162393931
+          3532336630393630393164396563343831633833633836300a623037633034313166613330623537
+          35356264616239373265303133613234343832306536383363613631326135306361653332393336
+          3063323833323437390a653362343534316534316162656132653032656264383437383561356665
+          6564
+cleanup_tmp: no
+ssh_key: /root/.ssh/id_rsa.pub ## on local host of virt machine
