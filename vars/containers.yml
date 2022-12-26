@@ -7,7 +7,7 @@ ContainerData: /Containers
 PodmanContainers:
   #- Letsencrypt
   - Tdarr
-  - Jellyfin
+  # - Jellyfin
   #- Netbootxyz
   - Heimdall
   #- Matrix
@@ -20,7 +20,8 @@ PodmanContainers:
   - Sonarr
   #- Podget
   #- Lancache
-  #- Nextcloud
+  - Nextcloud
+  - Influxdb
   #- VSCode
   #- Netbox-community
   #- Gitea
