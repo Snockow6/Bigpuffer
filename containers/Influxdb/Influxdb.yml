@@ -1,0 +1,34 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/library/influxdb:2.6.0
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - 8086:8086
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+  register: state
+
+# - name: Make {{ item }} Systemd service
+#   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+#   when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
