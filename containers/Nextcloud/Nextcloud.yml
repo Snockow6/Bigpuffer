@@ -1,58 +1,62 @@
 ---
-- name: Create {{ item }} pod
-  containers.podman.podman_pod:
-    name: "{{ item }}"
-    state: started
-    ports:
-      - "8443:443"
-  register: state
+# - name: Create {{ item }} pod
+#   containers.podman.podman_pod:
+#     name: "{{ item }}"
+#     state: started
+#     ports:
+#       - "8443:443"
+#   register: state
 
-- name: Create {{ item }}_app Podman Container
+- name: Create {{ item }} Podman Container
   containers.podman.podman_container:
-    name: "{{ item }}_app"
-    pod: Nextcloud
+    name: "{{ item }}"
+    # pod: Nextcloud
     image: ghcr.io/linuxserver/nextcloud
     state: present
-    security_opt:
-      label=type:Nextcloud_app.process
+    # security_opt:
+    #   label=type:Nextcloud_app.process
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - "8443:443"
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
-      - "/Container/{{ item }}/data:/data:Z,rw"
+      - "{{ ContainerData }}/{{ item }}/config:/config:rw"
+      - "{{ ContainerData }}/{{ item }}/data:/data:rw"
+  register: state
 
-- name: Create {{ item }}_db Podman Container
-  containers.podman.podman_container:
-    name: "{{ item }}_db"
-    image: docker.io/mysql:8
-    pod: Nextcloud
-    security_opt:
-      label=type:Nextcloud_db.process
-    env:
-      MYSQL_RANDOM_ROOT_PASSWORD: yes
-      MYSQL_DATABASE: "{{ item }}"
-      MYSQL_USER: "{{ item }}"
-      MYSQL_PASSWORD: "{{ Sonarr_Password }}"
-    volumes:
-      - "/Container/{{ item }}/db:/var/lib/mysql:Z,rw"
-
-- name: Make {{ item }} Systemd service
-  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-  when: state.changed == true
+# - name: Create {{ item }}_db Podman Container
+#   containers.podman.podman_container:
+#     name: "{{ item }}_db"
+#     image: docker.io/mysql:8
+#     pod: Nextcloud
+#     security_opt:
+#       label=type:Nextcloud_db.process
+#     env:
+#       MYSQL_RANDOM_ROOT_PASSWORD: yes
+#       MYSQL_DATABASE: "{{ item }}"
+#       MYSQL_USER: "{{ item }}"
+#       MYSQL_PASSWORD: "{{ Sonarr_Password }}"
+#     volumes:
+#       - "/Container/{{ item }}/db:/var/lib/mysql:Z,rw"
 
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: yes
     enabled: yes
-    name: "pod-{{ item }}"
+    name: "container-{{ item }}"
   when: state.changed == true
 
 - name: Start {{ item }} service
   ansible.builtin.systemd:
     state: started
     enabled: yes
-    name: "pod-{{ item }}"
+    name: "container-{{ item }}"
   when: state.changed == false
