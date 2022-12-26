@@ -15,7 +15,7 @@
       PGID="{{ UserID }}"
       TZ="{{ TimeZone }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw"
+      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
   register: state
 
 # - name: Make {{ item }} Systemd service

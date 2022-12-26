@@ -26,9 +26,9 @@
       -e TZ="{{ TimeZone }}" \
       -e USER="{{ Sonarr_User }}" \
       -e PASS="{{ Sonarr_Password }}" \
-      -v "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw" \
-      -v "{{ ContainerData }}/{{ item }}/Downloads:/downloads:z,rw" \
-      -v "{{ ContainerData }}/{{ item }}/Watch:/watch:z,rw" \
+      -v "{{ ContainerData }}/{{ item }}/Config:/config:rw" \
+      -v "{{ ContainerData }}/{{ item }}/Downloads:/downloads:rw" \
+      -v "{{ ContainerData }}/{{ item }}/Watch:/watch:rw" \
       -p 9091:9091 \
       -p 51413:51413 \
       -p 51413:51413/udp \
