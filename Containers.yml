@@ -1,0 +1,54 @@
+---
+- name: playbook to configure bigpuffer server
+  hosts: 
+    #- bikinibodhi
+    - bigpuffer
+  become: yes ## need to change should be defined in running playbooks/roles
+  vars_files:
+    - vars/user.yml
+    - vars/group.yml
+  vars:
+    ## mount vars
+    create_mounts:
+      - name: "Anime"
+        mountpoint: "/media/Anime"
+        type: "nfs"
+        opts: "rw,sync,hard"
+        src: "192.168.10.3:/Tank/Shares/Anime"
+        state: present
+      - name: "TV"
+        mountpoint: "/media/TV"
+        type: "nfs"
+        opts: "rw,sync,hard"
+        src: "192.168.10.3:/Tank/Shares/TV"
+        state: present
+    
+    ## container vars
+    ContainerData: /Containers
+    PodmanContainers:
+      #- Jellyfin
+      #- Tdarr_Node
+      - Influxdb
+    Anime: "/media/Anime"
+    TV: "/media/TV"
+    #Linuxserver.io vars
+    UserID: 101009 # abc user
+    GroupID: 101009 # serverio group
+    TimeZone: Pacific/Auckland
+    
+  tasks:
+    - name: update linux
+      include_role:
+        name: update_linux
+    
+    # - name: add mounts to fstab and mount it
+    #   include_tasks: playbooks/mount/mount.yml
+
+    # - name: add groups
+    #   include_tasks: playbooks/create-group.yml    
+
+    # - name: add users
+    #   include_tasks: playbooks/create-user.yml
+    
+    - name: run containers
+      include_tasks: containers/Containers_main.yml
