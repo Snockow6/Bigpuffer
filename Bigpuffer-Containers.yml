@@ -1,0 +1,26 @@
+---
+- name: playbook to configure bigpuffer server
+  hosts: 
+    - bigpuffer
+  become: yes ## need to change should be defined in running playbooks/roles
+  vars_files:
+    - vars/user.yml
+    - vars/group.yml
+    - vars/containers.yml
+    
+  tasks:
+    - name: update linux
+      include_role:
+        name: update_linux
+    
+    # - name: add mounts to fstab and mount it
+    #   include_tasks: playbooks/mount/mount.yml
+
+    # - name: add groups
+    #   include_tasks: playbooks/create-group.yml    
+
+    # - name: add users
+    #   include_tasks: playbooks/create-user.yml
+    
+    - name: run containers
+      include_tasks: containers/Containers_main.yml
