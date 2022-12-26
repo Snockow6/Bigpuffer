@@ -2,12 +2,12 @@
   ansible.builtin.lineinfile:
     path: /etc/hosts
     state: present
-    line: "192.168.10.3 bikinibodhi"
+    line: "192.168.10.3 bigpuffer"
 
 - name: make mount directorys
   loop: "{{ create_mounts }}"
-  include: create_directorys.yml
+  include_tasks: create_directorys.yml
 
 - name: Add mounts to fstab and mount
   loop: "{{ create_mounts }}"
-  include: fstab_mount.yml
+  include_tasks: fstab_mount.yml
