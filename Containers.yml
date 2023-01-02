@@ -1,9 +1,9 @@
 ---
 - name: playbook to configure bigpuffer server
   hosts: 
-    #- bikinibodhi
-    - bigpuffer
-  become: yes ## need to change should be defined in running playbooks/roles
+    - bikinibodhi
+    - raspberrypi
+    #- bigpuffer
   vars_files:
     - vars/user.yml
     - vars/group.yml
@@ -28,27 +28,46 @@
     PodmanContainers:
       #- Jellyfin
       #- Tdarr_Node
-      - Influxdb
+      #- Sonarr
+      #- Heimdall
+      - Lancache
+      - Unbound
+      #- Influxdb
     Anime: "/media/Anime"
     TV: "/media/TV"
     #Linuxserver.io vars
     UserID: 101009 # abc user
     GroupID: 101009 # serverio group
     TimeZone: Pacific/Auckland
+    podman_user: abc
+    ## Lancache 
+    lancacheIP: 192.168.10.2
     
   tasks:
-    - name: update linux
-      include_role:
-        name: update_linux
+    # - name: update linux
+    #   import_role:
+    #     name: update_linux
+    #   become: yes
+
     
     # - name: add mounts to fstab and mount it
     #   include_tasks: playbooks/mount/mount.yml
 
     # - name: add groups
-    #   include_tasks: playbooks/create-group.yml    
+    #   import_tasks: playbooks/create-group.yml    
+    #   become: yes
 
     # - name: add users
-    #   include_tasks: playbooks/create-user.yml
-    
+    #   import_tasks: playbooks/create-user.yml
+    #   become: yes
+
+    # - name: install podman
+    #   include_role: 
+    #     name: podman_install
+    - ansible.builtin.debug:
+        msg: "{{ ansible_user  }}"
     - name: run containers
-      include_tasks: containers/Containers_main.yml
+      import_role: 
+        name: podman_containers
+      become: yes
+        
