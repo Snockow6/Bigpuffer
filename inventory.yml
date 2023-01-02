@@ -1,6 +1,8 @@
 ---
 servers:
   hosts:
+    172.29.119.3:
+    raspberrypi:
     #192.168.10.108:
 
     bigpuffer:
