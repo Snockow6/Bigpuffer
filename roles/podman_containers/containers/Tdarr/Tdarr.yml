@@ -1,0 +1,58 @@
+---
+- name: Pull an image {{ item }}
+  containers.podman.podman_image:
+    name: ghcr.io/haveagitgat/tdarr:latest
+
+- name: Make "{{ item }}" Systemd service
+  copy:
+    dest: "/etc/systemd/system/container-{{ item }}.service"
+    content: |
+      [Unit]
+      Description={{ item }} container
+      After=multi-user.target
+      Wants=multi-user.target, network-online.target
+      RequiresMountsFor={{ ContainerData }}/{{ item }}, {{ Anime }}, /run/containers/storage
+
+
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/podman kill {{ item }}
+      ExecStartPre=-/usr/bin/podman rm {{ item }}
+      ExecStartPre=-/usr/bin/podman pull ghcr.io/haveagitgat/tdarr:latest
+      ExecStart=/usr/bin/podman run \
+      --name {{ item }} \
+      -e serverIP="192.168.10.3" \
+      -e serverPort="8266" \
+      -e webUIPort="8265" \
+      -e internalNode="true" \
+      -e nodeID="Bigpuffer" \
+      -e TZ="{{ TimeZone }}" \
+      -v "{{ ContainerData }}/{{ item }}/Config:/app/configs:Z,rw" \
+      -v "{{ ContainerData }}/{{ item }}/Logs:/app/logs:Z,rw" \
+      -v "{{ ContainerData }}/{{ item }}/Tmp:/temp:Z,rw" \
+      -v "{{ ContainerData }}/{{ item }}/Server:/app/server:Z,rw" \
+      -v "{{ Anime }}:/Anime:rw" \
+      -p 8265:8265/tcp \
+      -p 8266:8266/tcp \
+      ghcr.io/haveagitgat/tdarr:latest
+
+      ExecStop=/usr/bin/podman stop {{ item }}
+
+      [Install]
+      WantedBy=multi-user.target
+  register: state
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false

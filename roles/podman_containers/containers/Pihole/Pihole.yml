@@ -1,0 +1,78 @@
+---
+- name: stop and disable resolvd
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: no
+    name: "systemd-resolved"
+
+- name: unmask resolv.conf 
+  file:
+    mode: umask
+    path: /etc/resolv.conf
+  register: resolv
+
+- name: restart NetworkManager to generate Resolv conf
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "NetworkManager"
+  when: resolv.changed == true
+
+- name: Create {{ item }} config folder
+  file:
+    path: "/Container/{{ item }}/config"
+    state: directory
+
+- name: Create dnsmasq folder
+  file:
+    path: "/Container/{{ item }}/dnsmasqd"
+    state: directory
+
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/pihole/pihole:latest
+    hostname: "{{ item }}"
+    security_opt:
+      label=type:Pihole.process
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    ports:
+      - "{{ PiholeIP }}:53:53/tcp"
+      - "{{ PiholeIP }}:53:53/udp"
+      - "{{ PiholeIP }}:80:80/tcp"
+    env:
+      DNSMASQ_USER=root
+      TZ="{{ TimeZone }}"
+      WEBPASSWORD="{{ Sonarr_Password }}"
+      DNS2="{{ lancacheIP }}"
+      DNS1="192.168.10.5"
+      ServerIP="{{ PiholeIP }}"
+    volume:
+      - "/Container/{{ item }}/config:/etc/pihole/:Z,rw"
+      - "/Container/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:Z,rw"
+  register: state
+
+#podman generate systemd --files --name Wordpress 
+#Auto Generate systemd files
+# cd ~/.config/systemd/user && /usr/bin/podman generate systemd --files --name {{ item }}
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false

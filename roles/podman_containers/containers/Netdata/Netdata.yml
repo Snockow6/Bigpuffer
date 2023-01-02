@@ -1,0 +1,39 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image:  docker.io/netdata/netdata
+    hostname: "{{ ansible_host }}"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor=unconfined
+    ports:
+      - 19999:19999
+    volume:
+      - "{{ ContainerConfigs }}/{{ item }}/config:/etc/netdata:Z,rw"
+      - "/etc/passwd:/host/etc/passwd:z,ro"
+      - "/etc/group:/host/etc/group:z,ro"
+      - "/etc/os-release:/host/etc/os-release:z,ro"
+      - "/proc:/host/proc:z,ro"
+      - "/sys:/host/sys:z,ro"
+  register: state
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false

@@ -1,0 +1,15 @@
+---
+# tasks file for podman_install
+- name: install podman - Redhat
+  package:
+    name: podman
+    state: present
+  when: ansible_os_family  == 'RedHat'
+  become: yes
+
+- name: install cockpit-podman - Redhat
+  package:
+    name: cockpit-podman
+    state: present
+  when: ansible_os_family  == 'RedHat' and cockpit | bool
+  become: yes

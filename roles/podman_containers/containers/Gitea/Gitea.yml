@@ -1,0 +1,62 @@
+---
+- name: Create {{ item }} pod
+  containers.podman.podman_pod:
+    name: "{{ item }}"
+    state: started
+    ports:
+      - "3000:3000"
+      - "2224:22"
+  register: state
+
+- name: Create {{ item }}_app Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}_app"
+    pod: "{{ item }}"
+    image: docker.io/gitea/gitea:1.14.5
+    security_opt:
+      label=type:Gitea_app.process
+    env:
+      USER="Snockow6"
+      USER_UID="{{ UserID }}"
+      USER_GID="{{ GroupID }}"
+      GITEA__database__DB_TYPE=mysql
+      GITEA__database__HOST="{{ item }}_db:3306"
+      GITEA__database__NAME="{{ item }}"
+      GITEA__database__USER="{{ item }}"
+      GITEA__database__PASSWD="{{ Sonarr_Password }}"
+    volume:
+      - "/Container/{{ item }}/data:/data:rw"
+
+- name: Create {{ item }}_db Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}_db"
+    pod: "{{ item }}"
+    image: docker.io/library/mysql:8
+    security_opt:
+      label=type:Gitea_db.process
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      MYSQL_USER="{{ item }}"
+      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_DATABASE="{{ item }}"
+    volume:
+      - "/Container/{{ item }}/db:/var/lib/mysql:rw"
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "pod-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "pod-{{ item }}"
+  when: state.changed == false

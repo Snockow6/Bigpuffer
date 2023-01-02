@@ -1,0 +1,38 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/gitlab/gitlab-ce:latest
+    hostname: gitlab.shedinternet.net
+    memory: 4g
+    env: 
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.shedinternet.net'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - "8083:443"
+      - "10.0.0.4:2224:2224"
+    volume:
+      - "/Container/{{ item }}/config:/etc/gitlab:rw" # locks to only this container
+      - "/Container/{{ item }}/data:/var/opt/gitlab:rw"
+      - "/Container/{{ item }}/logs:/var/log/gitlab:rw"
+  register: state
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
