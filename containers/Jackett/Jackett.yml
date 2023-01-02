@@ -25,7 +25,7 @@
       -e PGID="{{ GroupID }}" \
       -e TZ="{{ TimeZone }}" \
       -v "{{ ContainerData }}/{{ item }}/Config:/config:rw" \
-      -v "/{{ ContainerData }}/{{ item }}/Downloads:/downloads" \
+      -v "{{ ContainerData }}/{{ item }}/Downloads:/downloads" \
       -p 9117:9117 \
       ghcr.io/linuxserver/jackett:latest
 
