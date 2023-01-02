@@ -2,7 +2,7 @@
 create_users:
   - name: "nathan"
     uid: "1000"
-    groups: "nathan,users,serverio,libvirt,kvm"
+    groups: "nathan,serverio"
     type: admin
 
   - name: "abc"
