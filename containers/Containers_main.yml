@@ -1,16 +1,19 @@
 ---
 - name: install podman
   package:
-    name: cockpit-podman
-    state: present
-  when: ansible_distribution  != 'Debian'
-
-- name: install podman
-  package:
     name: podman
     state: present
   when: ansible_distribution  != 'Debian'
+  become: yes
+
+- name: install cockpit-podman
+  package:
+    name: cockpit-podman
+    state: present
+  when: ansible_distribution  != 'Debian'
+  become: yes
 
 - name: deploy containers
   loop: "{{ PodmanContainers }}"
-  include_tasks: "containers/{{ item }}/{{ item }}.yml"
+  import_tasks: "containers/{{ item }}/{{ item }}.yml"
+  become_user: "{{ podman_user }}"
