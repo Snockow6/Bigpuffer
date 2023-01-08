@@ -1,0 +1,56 @@
+---
+- name: Installs and sets up zfs 
+  hosts:  bigpuffer
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: ansible-role-zfs
+      include_role:
+        name: ansible-role-zfs-3.3.1
+      vars:
+        zfs_use_zfs_mount_generator: false
+        # use zfs_mount_generator but don't invoke ZED (Docker triggers it quite often)
+        zfs_kernel_module_parameters:
+        # use 1/4 of the memory for ZFS ARC
+          zfs_arc_max: "{{ (ansible_memtotal_mb * 1024**2 * 0.25) | int }}"
+
+        # schedule for ZFS scrubs
+        zfs_scrub_schedule: monthly
+
+        _zfs_filesytems_properties:
+          canmount: true
+          snapdir: hidden
+
+
+        zfs_filesystems: "{{ _zfs_filesystems_system }}"
+        _zfs_filesystems_system:
+          - name: Tank/Containers/Gitea
+ 
+
+        zfs_zrepl_enabled: true
+        zfs_zrepl_config:
+          jobs:
+            - name: storage
+              type: snap
+              filesystems: {
+                "Tank/Containers/Nextcloud": true,
+              }
+              snapshotting:
+                type: periodic
+                interval: 12h
+                prefix: auto_
+              pruning:
+                keep:
+                  # prune automatic snapshots
+                  - type: grid
+                    # in first 24 hours keep all snapshots
+                    # in first 7 days 1 snapshot each day
+                    # in first month keep 1 snapshot each week
+                    # discard the rest
+                    # details see: https://zrepl.github.io/configuration/prune.html#policy-grid
+                    grid: 1x24h(keep=12) | 7x1d(keep=1) | 3x7d(keep=1)
+                    regex: "^auto_.*"
+
+                  # keep manual snapshots
+                  - type: regex
+                    regex: "^manual_.*"
