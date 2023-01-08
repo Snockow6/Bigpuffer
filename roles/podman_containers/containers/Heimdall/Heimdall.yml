@@ -18,15 +18,10 @@
       - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
   register: state
 
-# - name: Make {{ item }} Systemd service
-#   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-#   when: state.changed == true
-
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: yes
-    scope: user
     enabled: yes
     name: "container-{{ item }}"
   when: state.changed == true
@@ -34,7 +29,6 @@
 - name: Start {{ item }} service
   ansible.builtin.systemd:
     state: started
-    scope: user
     enabled: yes
     name: "container-{{ item }}"
   when: state.changed == false
