@@ -21,6 +21,8 @@
       ExecStartPre=-/usr/bin/podman pull ghcr.io/haveagitgat/tdarr:latest
       ExecStart=/usr/bin/podman run \
       --name {{ item }} \
+      --cpus 6 \
+      --memory-reservation=4G \
       -e serverIP="192.168.10.3" \
       -e serverPort="8266" \
       -e webUIPort="8265" \
