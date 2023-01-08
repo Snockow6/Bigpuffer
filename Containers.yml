@@ -1,9 +1,10 @@
 ---
 - name: playbook to configure bigpuffer server
+  become: yes
   hosts: 
-    - bikinibodhi
-    - raspberrypi
-    #- bigpuffer
+    # - bikinibodhi
+    # - raspberrypi
+    - bigpuffer
   vars_files:
     - vars/user.yml
     - vars/group.yml
@@ -26,15 +27,27 @@
     ## container vars
     ContainerData: /Containers
     PodmanContainers:
-      #- Jellyfin
-      #- Tdarr_Node
-      #- Sonarr
-      #- Heimdall
-      - Lancache
-      - Unbound
+      - Jellyfin
+      - Tdarr
+      - Sonarr
+      - Heimdall
+      - Nextcloud
+      - Gitea
+      # - Lancache
+      # - Unbound
       #- Influxdb
     Anime: "/media/Anime"
     TV: "/media/TV"
+
+    Sonarr_User: localadmin
+    Sonarr_Password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          33323634386266326236323537636232636233303730346662303164346133653731323962336261
+          6134343666393234393235373662316365363864663135350a646232653334316239383430326166
+          37653234613061313030393536363934386630306563383030356165323234383966643166363364
+          3964646236343836340a343930346666666134643833333736663437396537396464373332336662
+          6263
+
     #Linuxserver.io vars
     UserID: 101009 # abc user
     GroupID: 101009 # serverio group
@@ -44,30 +57,25 @@
     lancacheIP: 192.168.10.2
     
   tasks:
-    # - name: update linux
-    #   import_role:
-    #     name: update_linux
-    #   become: yes
-
+    - name: update linux
+      import_role:
+        name: update_linux
     
-    # - name: add mounts to fstab and mount it
-    #   include_tasks: playbooks/mount/mount.yml
+    - name: add mounts to fstab and mount it
+      include_tasks: playbooks/mount/mount.yml
 
-    # - name: add groups
-    #   import_tasks: playbooks/create-group.yml    
-    #   become: yes
+    - name: add groups
+      import_tasks: playbooks/create-group.yml    
+      become: yes
 
-    # - name: add users
-    #   import_tasks: playbooks/create-user.yml
-    #   become: yes
+    - name: add users
+      import_tasks: playbooks/create-user.yml
+      become: yes
 
-    # - name: install podman
-    #   include_role: 
-    #     name: podman_install
-    - ansible.builtin.debug:
-        msg: "{{ ansible_user  }}"
+    - name: install podman
+      include_role: 
+        name: podman_install
+    
     - name: run containers
       import_role: 
         name: podman_containers
-      become: yes
-        
