@@ -1,0 +1,33 @@
+---
+# extend default yamllint configuration
+# https://yamllint.readthedocs.io/en/stable/configuration.html#default-configuration
+extends: default
+
+rules:
+  braces:
+    max-spaces-inside: 1
+    level: error
+  brackets:
+    max-spaces-inside: 1
+    level: error
+  colons:
+    max-spaces-after: -1
+    level: error
+  commas:
+    max-spaces-after: -1
+    level: error
+  empty-lines:
+    max: 3
+    level: error
+  hyphens:
+    level: error
+  new-lines:
+    type: unix
+  comments-indentation: disable
+  document-start: disable
+  line-length: disable
+  truthy: disable
+
+ignore: |
+  .tox/
+  .cache/
