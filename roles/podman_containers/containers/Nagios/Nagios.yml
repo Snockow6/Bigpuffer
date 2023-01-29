@@ -1,0 +1,41 @@
+---
+
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/jasonrivers/nagios:latest
+    state: present
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - "8443:443"
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ GroupID }}"
+      TZ="{{ TimeZone }}"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/etc:/opt/nagios/etc:rw"
+      - "{{ ContainerData }}/{{ item }}/var:/opt/nagios/var:rw"
+      - "{{ ContainerData }}/{{ item }}/Custom-Nagios-Plugins:/opt/Custom-Nagios-Plugins:rw"
+      - "{{ ContainerData }}/{{ item }}/nagiosgraph/var:/opt/nagiosgraph/var:rw"
+      - "{{ ContainerData }}/{{ item }}/nagiosgraph/etc:/opt/nagiosgraph/etc:rw"
+  register: state
+
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
