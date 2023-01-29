@@ -11,7 +11,7 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     ports:
-      - "8443:443"
+      - "9443:443"
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
@@ -24,6 +24,10 @@
       - "{{ ContainerData }}/{{ item }}/nagiosgraph/etc:/opt/nagiosgraph/etc:rw"
   register: state
 
+- name: Pause for 10 seconds to start app
+  pause:
+    seconds: 10
+  when: state.changed == true
 
 - name: restart {{ item }} service if change
   ansible.builtin.systemd:
