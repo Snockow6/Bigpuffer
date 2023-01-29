@@ -31,8 +31,8 @@
     volume:
       - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
       - "{{ ContainerData }}/Transmission/Downloads:/downloads:rw"
-      - "{{ Anime }}:/Anime" 
-      - "{{ TV }}:/TV" 
+      - "{{ Anime }}:/Anime:rw" 
+      - "{{ TV }}:/TV:rw" 
 
 # - name: Make "{{ item }}" Systemd service
 #   copy:
