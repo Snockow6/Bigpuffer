@@ -1,5 +1,5 @@
 ---
-- name: playbook to configure bigpuffer server
+- name: playbook to install podman and configure containers
   become: yes
   hosts: 
     # - bikinibodhi
@@ -29,15 +29,17 @@
     PodmanContainers:
       - Jellyfin
       - Tdarr
-      - Sonarr
-      - Heimdall
-      - Nextcloud
-      - Gitea
+      # - Sonarr
+      # - Heimdall
+      # - Nextcloud
+      # - Nagios
+      # - Gitea
       # - Lancache
       # - Unbound
       #- Influxdb
-    Anime: "/media/Anime"
+    Anime: "/Tank/Shares/Anime"
     TV: "/media/TV"
+    Youtube: "/Tank/Shares/Youtube"
 
     Sonarr_User: localadmin
     Sonarr_Password: !vault |
@@ -54,12 +56,12 @@
     TimeZone: Pacific/Auckland
     podman_user: abc
     ## Lancache 
-    lancacheIP: 192.168.10.2
+    lancacheIP: 192.168.10.3
     
   tasks:
-    - name: update linux
-      import_role:
-        name: update_linux
+    # - name: update linux
+    #   import_role:
+    #     name: update_linux
     
     - name: add mounts to fstab and mount it
       include_tasks: playbooks/mount/mount.yml
