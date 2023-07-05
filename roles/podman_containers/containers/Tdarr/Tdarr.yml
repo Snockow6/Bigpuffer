@@ -36,6 +36,7 @@
       -v "{{ ContainerData }}/{{ item }}/Tmp:/temp:Z,rw" \
       -v "{{ ContainerData }}/{{ item }}/Server:/app/server:Z,rw" \
       -v "{{ Anime }}:/Anime:rw" \
+      -v "/Tank/Shares/Replays:/Replays:rw" \
       -p 8265:8265/tcp \
       -p 8266:8266/tcp \
       ghcr.io/haveagitgat/tdarr:latest
