@@ -27,6 +27,7 @@
       -v "{{ ContainerData }}/{{ item }}/Config:/config:Z,rw" \
       -v "{{ Anime }}:/Anime:rw" \
       -v "{{ TV }}:/TV:rw" \
+      -v "{{ Youtube }}:/Youtube:rw" \
       -p 8096:8096 \
       ghcr.io/linuxserver/jellyfin:latest
 
