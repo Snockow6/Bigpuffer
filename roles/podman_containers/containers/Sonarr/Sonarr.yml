@@ -33,6 +33,7 @@
       - "{{ ContainerData }}/Transmission/Downloads:/downloads:rw"
       - "{{ Anime }}:/Anime:rw" 
       - "{{ TV }}:/TV:rw" 
+      - "{{ Youtube }}:/Youtube:rw"
 
 # - name: Make "{{ item }}" Systemd service
 #   copy:
