@@ -11,7 +11,7 @@
   containers.podman.podman_container:
     name: "{{ item }}"
     # pod: Nextcloud
-    image: ghcr.io/linuxserver/nextcloud
+    image: ghcr.io/linuxserver/nextcloud:25.0.2-ls215
     state: present
     # security_opt:
     #   label=type:Nextcloud_app.process

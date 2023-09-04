@@ -6,6 +6,7 @@
     ports:
       - "3000:3000"
       - "2224:22"
+      - "3306:3306"
   register: state
 
 - name: Create {{ item }}_app Podman Container
@@ -18,7 +19,7 @@
       USER_UID="{{ UserID }}"
       USER_GID="{{ GroupID }}"
       GITEA__database__DB_TYPE=mysql
-      GITEA__database__HOST="{{ item }}_db:3306"
+      GITEA__database__HOST="Gitea:3306"
       GITEA__database__NAME="{{ item }}"
       GITEA__database__USER="{{ item }}"
       GITEA__database__PASSWD="{{ Sonarr_Password }}"
@@ -30,6 +31,7 @@
     name: "{{ item }}_db"
     pod: "{{ item }}"
     image: docker.io/library/mysql:8
+    # hostname: gitea_db
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="yes"
       MYSQL_USER="{{ item }}"

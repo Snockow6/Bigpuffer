@@ -7,8 +7,6 @@
       - NET_ADMIN
     ports:
       - 9443:443
-    security_opt:
-      label=type:Letsencrypt.process
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
