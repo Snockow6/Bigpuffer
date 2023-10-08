@@ -1,16 +1,16 @@
 ---
-- name: install cockpit
-  package:
+- name: Install cockpit
+  ansible.builtin.package:
     name: cockpit
     state: present
 
-- name: enable and start cockpit.socket
+- name: Enable and start cockpit.socket
   ansible.builtin.systemd:
     state: started
     enabled: yes
     name: cockpit.socket
 
-- name: allow cockpit on firewalld
+- name: Allow cockpit on firewalld
   ansible.posix.firewalld:
     service: cockpit
     permanent: yes
