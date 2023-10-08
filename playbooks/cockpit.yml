@@ -7,12 +7,12 @@
 - name: Enable and start cockpit.socket
   ansible.builtin.systemd:
     state: started
-    enabled: yes
+    enabled: true
     name: cockpit.socket
 
 - name: Allow cockpit on firewalld
   ansible.posix.firewalld:
     service: cockpit
-    permanent: yes
+    permanent: true
     state: enabled
   when: ansible_distribution  == 'Redhat'
