@@ -1,55 +1,74 @@
 ---
-- name: copy cockpit-zfs-manager into cockpit directory
-  copy:
-    src: ./files/cockpit-zfs-manager/zfs
-    dest: /usr/share/cockpit
+- name: Confirm if cockpit-zfs-manager exists in cockpit
+  ansible.builtin.stat:
+    path: /usr/share/cockpit/zfs
+  register: cockpit_zfs_manager
 
-- name: set samba config file
-  copy:
-    dest: /etc/samba/smb.conf
-    content: |
-      # See smb.conf.example for a more detailed config file or
-      # read the smb.conf manpage.
-      # Run 'testparm' to verify the config is correct after
-      # you modified it.
-      #
-      # Note:
-      # SMB1 is disabled by default. This means clients without support for SMB2 or
-      # SMB3 are no longer able to connect to smbd (by default).
+- name: Install cockpit-zfs-manager of does not exists
+  block:
+    - name: Make sure git is installed
+      ansible.builtin.package:
+        name: git
+        state: present
 
-      [global]
-        workgroup = SAMBA
-        security = user
+    - name: Clone cockpit-zfs-manager repo to tmp
+      ansible.builtin.git:
+        repo: https://github.com/45drives/cockpit-zfs-manager.git
+        dest: /tmp/cockpit-zfs-manager
 
-        passdb backend = tdbsam
+    - name: Copy cockpit-zfs-manager into cockpit directory
+      ansible.builtin.copy:
+        src: /tmp/cockpit-zfs-manager/zfs
+        dest: /usr/share/cockpit
+        remote_src: true
 
-        printing = cups
-        printcap name = cups
-        load printers = yes
-        cups options = raw
+    - name: Set samba config file
+      copy:
+        dest: /etc/samba/smb.conf
+        content: |
+          # See smb.conf.example for a more detailed config file or
+          # read the smb.conf manpage.
+          # Run 'testparm' to verify the config is correct after
+          # you modified it.
+          #
+          # Note:
+          # SMB1 is disabled by default. This means clients without support for SMB2 or
+          # SMB3 are no longer able to connect to smbd (by default).
 
-        shadow: snapdir = .zfs/snapshot
-        shadow: sort = desc
-        shadow: format = %Y.%m.%d-%H.%M.%S
-        shadow: localtime = yes
-        vfs objects = acl_xattr shadow_copy2
+          [global]
+            workgroup = SAMBA
+            security = user
 
-        # COCKPIT ZFS MANAGER
-        # WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION
-        include = /etc/cockpit/zfs/shares.conf
-        include = /run/cockpit/zfs/shares.conf
+            passdb backend = tdbsam
 
-      [homes]
-        comment = Home Directories
-        valid users = %S, %D%w%S
-        browseable = No
-        read only = No
-        inherit acls = Yes
-  register: config_state
+            printing = cups
+            printcap name = cups
+            load printers = yes
+            cups options = raw
 
-- name: start and enable smb
-  ansible.builtin.systemd:
-    state: restart
-    enabled: yes
-    name: smb
-  when: config_state.changed == true
+            shadow: snapdir = .zfs/snapshot
+            shadow: sort = desc
+            shadow: format = %Y.%m.%d-%H.%M.%S
+            shadow: localtime = yes
+            vfs objects = acl_xattr shadow_copy2
+
+            # COCKPIT ZFS MANAGER
+            # WARNING: DO NOT EDIT, AUTO-GENERATED CONFIGURATION
+            include = /etc/cockpit/zfs/shares.conf
+            include = /run/cockpit/zfs/shares.conf
+
+          [homes]
+            comment = Home Directories
+            valid users = %S, %D%w%S
+            browseable = No
+            read only = No
+            inherit acls = Yes
+      register: config_state
+
+    - name: start and enable smb
+      ansible.builtin.systemd:
+        state: restart
+        enabled: yes
+        name: smb
+      when: config_state.changed == true
+  when: not cockpit_zfs_manager.stat.exists 
