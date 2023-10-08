@@ -1,7 +1,7 @@
 ---
-- name: playbook to configure bigpuffer server
-  hosts: all
-  become: yes
+- name: Playbook to configure bigpuffer server
+  hosts: bigpuffer
+  become: true
   vars_files:
     - vars/containers.yml
     - vars/group.yml
@@ -12,12 +12,12 @@
     # - name: update linux
     #   include_tasks: playbooks/update-linux.yml
 
-    - name: add groups
-      include_tasks: playbooks/create-group.yml
+    - name: Add groups
+      ansible.builtin.include_tasks: playbooks/create-group.yml
 
-    - name: add users
-      include_tasks: playbooks/create-user.yml
-    
+    - name: Add users
+      ansible.builtin.include_tasks: playbooks/create-user.yml
+
 #    - name: install and configure dnsmasq
 #      include_tasks: playbooks/dnsmasq.yml
 
@@ -29,21 +29,20 @@
 
 #    - name: install and enable glusterfs
 #      include_tasks: playbooks/glusterfs.yml
-    
+
 #    - name: add mounts to fstab and mount it
 #      include_tasks: playbooks/mount/mount.yml
 
-#    - name: install and enable cockpit
-#      include_tasks: playbooks/cockpit.yml
-    
+    - name: Install and enable cockpit
+      ansible.builtin.include_tasks: playbooks/cockpit.yml
 #    - name: install and enable nebula
 #      include_tasks: playbooks/nebula.yml
 
-    #- name: install and load openzfs
-      #include_tasks: playbooks/open-zfs-install.yml
+    # - name: install and load openzfs
+      # include_tasks: playbooks/open-zfs-install.yml
 
-    #- name: add cockpit zfs manager
-    #  include_tasks: playbooks/cockpit-zfs-manager.yml
+    - name: Add cockpit zfs manager
+      ansible.builtin.include_tasks: playbooks/cockpit-zfs-manager.yml
 
-    - name: run containers
-      include_tasks: containers/Containers_main.yml
+    # - name: Run containers
+      # ansible.builtin.include_tasks: containers/Containers_main.yml
