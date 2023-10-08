@@ -23,7 +23,7 @@
         remote_src: true
 
     - name: Set samba config file
-      copy:
+      ansible.builtin.copy:
         dest: /etc/samba/smb.conf
         content: |
           # See smb.conf.example for a more detailed config file or
