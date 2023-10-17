@@ -1,0 +1,14 @@
+---
+- name: Disable Selinux on Redhat Systems
+  when: ansible_facts['os_family'] == "RedHat"
+  block:
+    # Disable selinux for home machines
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+      register: var_SELinux
+
+    - name: Reboot machine if SELinux needs Disabling
+      ansible.builtin.reboot:
+      when: var_SELinux.reboot_required
+      
