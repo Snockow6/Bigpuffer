@@ -2,7 +2,7 @@
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
-    image: ghcr.io/linuxserver/heimdall:latest
+    image: lscr.io/linuxserver/heimdall:latest
     generate_systemd:
       new: false
       names: true
