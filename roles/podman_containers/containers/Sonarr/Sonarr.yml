@@ -12,7 +12,6 @@
       names: true
       path: /etc/systemd/system/
       restart_policy: "on-failure"
-  register: state
 
 - name: Create {{ item }}_Jackett Podman Container
   containers.podman.podman_container:
@@ -57,8 +56,6 @@
     name: "{{ item }}_app"
     pod: "{{ item }}"
     image: lscr.io/linuxserver/sonarr:latest
-    # security_opt:
-    #   label=type:Nextcloud_app.process
     generate_systemd:
       new: false
       names: true
@@ -77,27 +74,3 @@
       - "{{ Anime }}:/Anime:rw" 
       - "{{ TV }}:/TV:rw" 
       - "{{ Youtube }}:/Youtube:rw"
-
-# - name: Make {{ item }} Systemd service
-#   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
-#   when: state.changed == true
-
-# - name: Pause for 10 seconds to start app
-#   pause:
-#     seconds: 10
-#   when: state.changed == true
-
-# - name: restart {{ item }} service if change
-#   ansible.builtin.systemd:
-#     state: restarted
-#     daemon_reload: yes
-#     enabled: yes
-#     name: "pod-{{ item }}"
-#   when: state.changed == true
-
-# - name: Start {{ item }} service
-#   ansible.builtin.systemd:
-#     state: started
-#     enabled: yes
-#     name: "pod-{{ item }}"
-#   when: state.changed == false
