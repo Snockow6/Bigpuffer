@@ -1,0 +1,42 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image:  lscr.io/linuxserver/plex:latest
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ GroupID }}"
+      TZ="{{ TimeZone }}"
+    ports:
+      - 32400:32400
+      - 1900:1900/udp
+      - 5353:5353/udp
+      - 8324:8324
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+      - 32469:32469
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+      - "{{ Anime }}:/Anime:rw" 
+  register: state
+
+- name: Make {{ item }} Systemd service
+  shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}
+  when: state.changed == true
+
+- name: restart {{ item }} service if change
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == true
+
+- name: Start {{ item }} service
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "container-{{ item }}"
+  when: state.changed == false
