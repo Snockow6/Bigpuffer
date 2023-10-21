@@ -16,19 +16,3 @@
       TZ="{{ TimeZone }}"
     volume:
       - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
-  register: state
-
-- name: restart {{ item }} service if change
-  ansible.builtin.systemd:
-    state: restarted
-    daemon_reload: yes
-    enabled: yes
-    name: "container-{{ item }}"
-  when: state.changed == true
-
-- name: Start {{ item }} service
-  ansible.builtin.systemd:
-    state: started
-    enabled: yes
-    name: "container-{{ item }}"
-  when: state.changed == false
