@@ -25,4 +25,3 @@
     volume:
       - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
       - "{{ Anime }}:/Anime:rw" 
-  register: state
