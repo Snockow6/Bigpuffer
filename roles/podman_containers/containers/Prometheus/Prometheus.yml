@@ -1,0 +1,15 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image:  docker.io/prom/prometheus
+    state: absent
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - "9092:9090"
+    volume:
+      - "/etc/prometheus:/etc/prometheus:rw"
