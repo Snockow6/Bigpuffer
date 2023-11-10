@@ -1,0 +1,28 @@
+---
+- name: Playbook to configure Raspberrypi server
+  hosts: 192.168.10.1
+  become: true
+  
+  vars:
+    ContainerData: /Containers
+    PodmanContainers:
+      - Lancache
+    #Linuxserver.io vars
+    UserID: 101009 # abc user
+    GroupID: 101009 # serverio group
+    TimeZone: Pacific/Auckland
+    ## Lancache 
+    lancacheIP: 192.168.10.1
+
+  tasks:
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: Raspberrypi
+
+    - name: Update linux
+      ansible.builtin.include_role:
+        name: update_linux
+    
+    - name: Run containers
+      ansible.builtin.import_role:
+        name: podman_containers
