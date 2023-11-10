@@ -3,8 +3,8 @@
   become: yes
   hosts: 
     # - bikinibodhi
-    # - raspberrypi
-    - bigpuffer
+    - 192.168.10.1
+    # - bigpuffer
   vars_files:
     - vars/user.yml
     - vars/group.yml
@@ -27,19 +27,22 @@
     ## container vars
     ContainerData: /Containers
     PodmanContainers:
-      - Jellyfin
-      - Tdarr
-      # - Sonarr
+      # - Jellyfin
+      # - Plex
+      # - Tdarr
+      - Sonarr
       # - Heimdall
       # - Nextcloud
       # - Nagios
       # - Gitea
+      # - Prometheus
+      # - Valheim
       # - Lancache
       # - Unbound
       #- Influxdb
-    Anime: "/Tank/Shares/Anime"
+    Anime: "/media/Anime"
     TV: "/media/TV"
-    Youtube: "/Tank/Shares/Youtube"
+    Youtube: "/media/Youtube"
 
     Sonarr_User: localadmin
     Sonarr_Password: !vault |
@@ -58,26 +61,33 @@
     ## Lancache 
     lancacheIP: 192.168.10.3
     
+    ValheimPass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65336133383961393265316233393631343637363438333731663038666134356332303832626530
+          3233396462393565306564316562326466343835626465350a646331323765363364633630313230
+          31313435313333353965373833623836323132363039643564626433633636313362356535353437
+          6433396261393361300a656365343164373264356237343466623762376435373762323032316435
+          3136
   tasks:
-    # - name: update linux
-    #   import_role:
-    #     name: update_linux
+    - name: Update linux
+      ansible.builtin.import_role:
+        name: update_linux
     
-    - name: add mounts to fstab and mount it
-      include_tasks: playbooks/mount/mount.yml
+    - name: Add mounts to fstab and mount it
+      ansible.builtin.include_tasks: playbooks/mount/mount.yml
 
-    - name: add groups
-      import_tasks: playbooks/create-group.yml    
-      become: yes
+    - name: Add groups
+      ansible.builtin.import_tasks: playbooks/create-group.yml    
 
-    - name: add users
-      import_tasks: playbooks/create-user.yml
-      become: yes
 
-    - name: install podman
-      include_role: 
-        name: podman_install
+    - name: Add users
+      ansible.builtin.import_tasks: playbooks/create-user.yml
+
+
+    # - name: install podman
+    #   include_role: 
+    #     name: podman_install
     
-    - name: run containers
-      import_role: 
+    - name: Run containers
+      ansible.builtin.import_role: 
         name: podman_containers

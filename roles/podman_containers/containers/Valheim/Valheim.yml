@@ -1,0 +1,23 @@
+---
+- name: Create {{ item }}-dns Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/lloesche/valheim-server
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    env:
+      SERVER_NAME="Crystalline Deezs"
+      WORLD_NAME="Deez Forests"
+      SERVER_PASS="{{ ValheimPass }}"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+      - "{{ ContainerData }}/{{ item }}/Data:/opt/valheim:rw" 
+    ports:
+      - 2456:2456/udp
+      - 2457:2457/udp
+    cap_add:
+      - sys_nice
+      
