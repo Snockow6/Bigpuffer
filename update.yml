@@ -1,10 +1,13 @@
 ---
-- name: playbook to configure bigpuffer server
-  hosts: 
-    - gateway
+- name: Playbook to update all servers
+  hosts:
+    # - 192.168.10.1
     - bigpuffer
-  become: yes ## need to change should be defined in running playbooks/roles
+    - gateway
+    # - ubuntu-us-central
+  become: true
 
   tasks:
-    - name: update linux
-      include_tasks: playbooks/update-linux.yml
+    - name: Update linux
+      ansible.builtin.include_role:
+        name: update_linux
