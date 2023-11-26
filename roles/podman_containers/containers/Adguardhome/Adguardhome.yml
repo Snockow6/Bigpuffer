@@ -19,3 +19,10 @@
       - "192.168.10.3:443:443/tcp"
       - "192.168.10.3:443:443/udp"
       - "192.168.10.3:3080:3000/tcp"              
+
+- name: Make sure {{ item }} service is enabled and started
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
