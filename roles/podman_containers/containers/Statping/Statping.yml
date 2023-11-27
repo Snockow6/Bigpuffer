@@ -1,0 +1,22 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/adamboutcher/statping-ng:latest
+    state: started
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/app:rw"    
+    ports:
+      - "8084:8080"           
+
+- name: Make sure {{ item }} service is enabled and started
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
