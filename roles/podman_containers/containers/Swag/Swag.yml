@@ -1,0 +1,31 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: lscr.io/linuxserver/swag:latest
+    cap_add:
+      - NET_ADMIN
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    env:
+      PUID="{{ UserID }}"
+      PGID="{{ GroupID }}"
+      TZ="{{ TimeZone }}"
+      URL="shedinternet.net"
+      SUBDOMAINS="cloud"
+      VALIDATION="dns"
+      DNSPLUGIN="cloudflare"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+    ports:
+      - "192.168.10.1:443:443"
+
+- name: Make sure {{ item }} service is enabled and started
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
