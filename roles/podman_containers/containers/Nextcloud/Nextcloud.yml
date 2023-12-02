@@ -2,14 +2,14 @@
 - name: Create {{ item }} Podman Container
   containers.podman.podman_container:
     name: "{{ item }}"
-    image: lscr.io/linuxserver/nextcloud:25.0.2-ls215
+    image: lscr.io/linuxserver/nextcloud:27.1.4
     generate_systemd:
       new: false
       names: true
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     ports:
-      - "443:443"
+      - "8443:443"
     env:
       PUID="{{ UserID }}"
       PGID="{{ GroupID }}"
