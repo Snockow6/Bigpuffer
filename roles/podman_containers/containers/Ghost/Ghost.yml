@@ -1,0 +1,63 @@
+---
+- name: Create {{ item }} pod
+  containers.podman.podman_pod:
+    name: "{{ item }}"
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - 2368:2368/tcp
+
+#################################################################
+# Create Ghost db 
+#################################################################
+
+- name: Create {{ item }}_db Podman pod
+  containers.podman.podman_container:
+    name: "{{ item }}_db"
+    pod: "{{ item }}"
+    image: docker.io/library/mysql:8.0
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    env:
+      MYSQL_DATABASE="{{ item }}"
+      MYSQL_USER="{{ item }}"
+      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_RANDOM_ROOT_PASSWORD="1"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/db:/var/lib/mysql:rw"
+
+#################################################################
+# Create Ghost app
+#################################################################
+
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}_app"
+    pod: "{{ item }}"
+    image: docker.io/library/ghost:4-alpine
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    env:
+      database__client=mysql
+      database__connection__host="localhost" 
+      database__connection__user="{{ item }}"
+      database__connection__password="{{ Sonarr_Password }}"
+      database__connection__database="{{ item }}"
+    volume:
+      - "{{ ContainerData }}/{{ item }}/Config:/var/lib/ghost/content:rw"
+
+- name: Make sure {{ item }} service is enabled and started
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "pod-{{ item }}"
