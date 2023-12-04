@@ -71,6 +71,6 @@
     volume:
       - "{{ container_data }}/{{ item }}/Config:/config:rw"
       - "{{ container_data }}/Transmission/Downloads:/downloads:rw"
-      - "{{ Anime }}:/Anime:rw" 
-      - "{{ TV }}:/TV:rw" 
-      - "{{ Youtube }}:/Youtube:rw"
+      - "{{ anime }}:/Anime:rw" 
+      - "{{ tv }}:/TV:rw" 
+      - "{{ youtube }}:/Youtube:rw"

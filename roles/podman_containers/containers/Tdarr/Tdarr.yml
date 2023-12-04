@@ -11,7 +11,7 @@
       Description={{ item }} container
       After=multi-user.target
       Wants=multi-user.target, network-online.target
-      RequiresMountsFor={{ container_data }}/{{ item }}, {{ Anime }}, /run/containers/storage
+      RequiresMountsFor={{ container_data }}/{{ item }}, {{ anime }}, /run/containers/storage
 
 
       [Service]
@@ -35,7 +35,7 @@
       -v "{{ container_data }}/{{ item }}/Logs:/app/logs:Z,rw" \
       -v "{{ container_data }}/{{ item }}/Tmp:/temp:Z,rw" \
       -v "{{ container_data }}/{{ item }}/Server:/app/server:Z,rw" \
-      -v "{{ Anime }}:/Anime:rw" \
+      -v "{{ anime }}:/Anime:rw" \
       -p 8265:8265/tcp \
       -p 8266:8266/tcp \
       ghcr.io/haveagitgat/tdarr:latest

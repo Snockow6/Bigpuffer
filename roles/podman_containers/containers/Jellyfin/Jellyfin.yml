@@ -13,7 +13,7 @@
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
     volume:
-      - "{{ podman_containers }}/{{ item }}/Config:/config:rw"
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
       - "{{ anime }}:/Anime:rw" 
       - "{{ tv }}:/TV:rw" 
       - "{{ youtube }}:/Youtube:rw"
