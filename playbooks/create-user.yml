@@ -1,7 +1,7 @@
 ---
 - name: create standard User
   loop: "{{ create_users }}"
-  user:
+  ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
     shell: /bin/bash
@@ -11,7 +11,7 @@
 
 - name: create Admin RedHat User
   loop: "{{ create_users }}"
-  user:
+  ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
     shell: /bin/bash
@@ -21,7 +21,7 @@
 
 - name: create Admin Debian User
   loop: "{{ create_users }}"
-  user:
+  ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
     shell: /bin/bash
