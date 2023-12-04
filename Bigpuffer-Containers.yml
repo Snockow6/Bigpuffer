@@ -1,26 +1,95 @@
 ---
-- name: playbook to configure bigpuffer server
+- name: Playbook to install podman and configure containers on Bigpuffer server
+  become: yes
   hosts: 
     - bigpuffer
-  become: yes ## need to change should be defined in running playbooks/roles
   vars_files:
     - vars/user.yml
     - vars/group.yml
-    - vars/containers.yml
+  vars:
+    ## mount vars
+    create_mounts:
+      - name: "Anime"
+        mountpoint: "/media/Anime"
+        type: "nfs"
+        opts: "rw,sync,hard"
+        src: "192.168.10.3:/Tank/Shares/Anime"
+        state: present
+      - name: "TV"
+        mountpoint: "/media/TV"
+        type: "nfs"
+        opts: "rw,sync,hard"
+        src: "192.168.10.3:/Tank/Shares/TV"
+        state: present
     
+    ## Container vars
+    container_data: /Containers
+    podman_containers:
+      - Adguardhome
+      - Statping
+      - Jellyfin
+      # - Plex
+      - Tdarr
+      - Sonarr
+      - Heimdall
+      # - Nextcloud
+      # - Nagios
+      - Gitea
+      # - Prometheus
+      # - Valheim
+      # - Lancache
+      # - Ghost
+      # - Swag
+      # - Unbound
+      #- Influxdb
+    anime: "/Tank/Shares/Anime"
+    tv: "/Tank/Shares/TV"
+    youtube: "/Tank/Shares/Youtube"
+
+    sonarr_user: localadmin
+    sonarr_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          33323634386266326236323537636232636233303730346662303164346133653731323962336261
+          6134343666393234393235373662316365363864663135350a646232653334316239383430326166
+          37653234613061313030393536363934386630306563383030356165323234383966643166363364
+          3964646236343836340a343930346666666134643833333736663437396537396464373332336662
+          6263
+
+    #Linuxserver.io vars
+    user_id: 101009 # abc user
+    group_id: 101009 # serverio group
+    time_zone: Pacific/Auckland
+    ## Lancache 
+    lancache_ip: 192.168.10.3
+    
+    pihole_ip: 192.168.10.3
+    valheimpass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65336133383961393265316233393631343637363438333731663038666134356332303832626530
+          3233396462393565306564316562326466343835626465350a646331323765363364633630313230
+          31313435313333353965373833623836323132363039643564626433633636313362356535353437
+          6433396261393361300a656365343164373264356237343466623762376435373762323032316435
+          3136
   tasks:
-    - name: update linux
-      include_role:
+    - name: Update linux
+      ansible.builtin.import_role:
         name: update_linux
     
-    # - name: add mounts to fstab and mount it
-    #   include_tasks: playbooks/mount/mount.yml
+    # - name: Add mounts to fstab and mount it
+    #   ansible.builtin.include_tasks: playbooks/mount/mount.yml
 
-    # - name: add groups
-    #   include_tasks: playbooks/create-group.yml    
+    - name: Add groups
+      ansible.builtin.import_tasks: playbooks/create-group.yml    
 
-    # - name: add users
-    #   include_tasks: playbooks/create-user.yml
+
+    - name: Add users
+      ansible.builtin.import_tasks: playbooks/create-user.yml
+
+
+    # - name: install podman
+    #   include_role: 
+    #     name: podman_install
     
-    - name: run containers
-      include_tasks: containers/Containers_main.yml
+    - name: Run containers
+      ansible.builtin.import_role: 
+        name: podman_containers
