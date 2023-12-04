@@ -1,7 +1,7 @@
 ---
 # tasks file for podman_containers
-- name: install podman
-  package:
+- name: Install podman
+  ansible.builtin.package:
     name: podman
     state: present
 
@@ -12,5 +12,5 @@
 #   when: ansible_distribution  != 'Debian'
 
 - name: Deploy containers
-  loop: "{{ PodmanContainers }}"
+  loop: "{{ podman_containers }}"
   ansible.builtin.include_tasks: "containers/{{ item }}/{{ item }}.yml"
