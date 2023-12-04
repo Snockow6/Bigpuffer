@@ -11,7 +11,7 @@
     ports:
       - 8086:8086
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
   register: state
 
 # - name: Make {{ item }} Systemd service

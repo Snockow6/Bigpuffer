@@ -27,10 +27,10 @@
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="yes"
       MYSQL_USER="{{ item }}"
-      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_PASSWORD="{{ sonarr_password }}"
       MYSQL_DATABASE="{{ item }}"
     volume:
-      - "/{{ ContainerData }}/{{ item }}/db:/var/lib/mysql:rw"
+      - "/{{ container_data }}/{{ item }}/db:/var/lib/mysql:rw"
 
 - name: Create {{ item }}_app Podman Container
   containers.podman.podman_container:
@@ -46,15 +46,15 @@
       - "Gitea_db"
     env:
       USER="Snockow6"
-      USER_UID="{{ UserID }}"
-      USER_GID="{{ GroupID }}"
+      USER_UID="{{ user_id }}"
+      USER_GID="{{ group_id }}"
       GITEA__database__DB_TYPE=mysql
       GITEA__database__HOST="Gitea_db:3306"
       GITEA__database__NAME="{{ item }}"
       GITEA__database__USER="{{ item }}"
-      GITEA__database__PASSWD="{{ Sonarr_Password }}"
+      GITEA__database__PASSWD="{{ sonarr_password }}"
     volume:
-      - "/{{ ContainerData }}/{{ item }}/data:/data:rw"
+      - "/{{ container_data }}/{{ item }}/data:/data:rw"
 
 # - name: Make {{ item }} Systemd service
 #   shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}

@@ -13,9 +13,9 @@
       - "8083:443"
       - "10.0.0.4:2224:2224"
     volume:
-      - "/Container/{{ item }}/config:/etc/gitlab:rw" # locks to only this container
-      - "/Container/{{ item }}/data:/var/opt/gitlab:rw"
-      - "/Container/{{ item }}/logs:/var/log/gitlab:rw"
+      - "{{ container_data }}/{{ item }}/config:/etc/gitlab:rw" # locks to only this container
+      - "{{ container_data }}/{{ item }}/data:/var/opt/gitlab:rw"
+      - "{{ container_data }}{{ item }}/logs:/var/log/gitlab:rw"
   register: state
 
 - name: Make {{ item }} Systemd service

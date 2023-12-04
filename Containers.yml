@@ -1,10 +1,11 @@
 ---
-- name: playbook to install podman and configure containers
+- name: Playbook to install podman and configure containers
   become: yes
   hosts: 
     # - bikinibodhi
-    - 192.168.10.1
+    # - 192.168.10.1
     # - bigpuffer
+    - gateway
   vars_files:
     - vars/user.yml
     - vars/group.yml
@@ -24,28 +25,32 @@
         src: "192.168.10.3:/Tank/Shares/TV"
         state: present
     
-    ## container vars
-    ContainerData: /Containers
-    PodmanContainers:
+    ## Container vars
+    container_data: /Containers
+    podman_containers:
+      # - Adguardhome
+      # - Statping
       # - Jellyfin
       # - Plex
       # - Tdarr
-      - Sonarr
+      # - Sonarr
       # - Heimdall
-      # - Nextcloud
+      - Nextcloud
       # - Nagios
       # - Gitea
       # - Prometheus
       # - Valheim
       # - Lancache
+      - Ghost
+      - Swag
       # - Unbound
       #- Influxdb
-    Anime: "/media/Anime"
-    TV: "/media/TV"
-    Youtube: "/media/Youtube"
+    anime: "/media/Anime"
+    tv: "/media/TV"
+    youtube: "/media/Youtube"
 
-    Sonarr_User: localadmin
-    Sonarr_Password: !vault |
+    sonarr_user: localadmin
+    sonarr_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33323634386266326236323537636232636233303730346662303164346133653731323962336261
           6134343666393234393235373662316365363864663135350a646232653334316239383430326166
@@ -54,14 +59,14 @@
           6263
 
     #Linuxserver.io vars
-    UserID: 101009 # abc user
-    GroupID: 101009 # serverio group
-    TimeZone: Pacific/Auckland
-    podman_user: abc
+    user_id: 101009 # abc user
+    group_id: 101009 # serverio group
+    time_zone: Pacific/Auckland
     ## Lancache 
-    lancacheIP: 192.168.10.3
+    lancache_ip: 192.168.10.3
     
-    ValheimPass: !vault |
+    pihole_ip: 192.168.10.3
+    valheimPass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65336133383961393265316233393631343637363438333731663038666134356332303832626530
           3233396462393565306564316562326466343835626465350a646331323765363364633630313230
@@ -73,8 +78,8 @@
       ansible.builtin.import_role:
         name: update_linux
     
-    - name: Add mounts to fstab and mount it
-      ansible.builtin.include_tasks: playbooks/mount/mount.yml
+    # - name: Add mounts to fstab and mount it
+    #   ansible.builtin.include_tasks: playbooks/mount/mount.yml
 
     - name: Add groups
       ansible.builtin.import_tasks: playbooks/create-group.yml    

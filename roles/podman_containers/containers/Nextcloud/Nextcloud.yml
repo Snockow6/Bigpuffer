@@ -11,12 +11,12 @@
     ports:
       - "8443:443"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/config:/config:rw"
-      - "{{ ContainerData }}/{{ item }}/data:/data:rw"
+      - "{{ container_data }}/{{ item }}/config:/config:rw"
+      - "{{ container_data }}/{{ item }}/data:/data:rw"
   register: state
 
 - name: restart {{ item }} service if change

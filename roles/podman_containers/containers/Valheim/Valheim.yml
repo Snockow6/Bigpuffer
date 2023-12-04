@@ -11,10 +11,10 @@
     env:
       SERVER_NAME="Crystalline Deezs"
       WORLD_NAME="Deez Forests"
-      SERVER_PASS="{{ ValheimPass }}"
+      SERVER_PASS="{{ valheimpass }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
-      - "{{ ContainerData }}/{{ item }}/Data:/opt/valheim:rw" 
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
+      - "{{ container_data }}/{{ item }}/Data:/opt/valheim:rw" 
     ports:
       - 2456:2456/udp
       - 2457:2457/udp

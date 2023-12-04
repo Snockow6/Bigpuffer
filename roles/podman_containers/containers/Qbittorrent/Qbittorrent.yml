@@ -9,12 +9,12 @@
       - 8088:8088
     env:
       WEBUI_PORT=8088
-      PUID="{{ UserID }}"
-      PGID="{{ UserID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw" # private to this container
-      - "{{ ContainerCache }}/Sonarr:/downloads:z,rw" # shared for other containers
+      - "{{ container_data }}/{{ item }}/config:/config:Z,rw" # private to this container
+      - "{{ container_data }}/Sonarr:/downloads:z,rw" # shared for other containers
   register: state
 
 #podman generate systemd --files --name Wordpress 

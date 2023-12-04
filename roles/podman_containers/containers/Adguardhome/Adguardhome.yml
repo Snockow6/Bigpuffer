@@ -10,8 +10,8 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/opt/adguardhome/conf:rw"
-      - "{{ ContainerData }}/{{ item }}/Work:/opt/adguardhome/work:rw"      
+      - "{{ container_data }}/{{ item }}/Config:/opt/adguardhome/conf:rw"
+      - "{{ container_data }}/{{ item }}/Work:/opt/adguardhome/work:rw"      
     ports:
       - "192.168.10.3:80:80"
       - "192.168.10.3:53:53/tcp"

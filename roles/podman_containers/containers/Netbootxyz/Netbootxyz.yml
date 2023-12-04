@@ -8,13 +8,13 @@
       - "{{ lancacheIP }}:69:69/udp"
       - "{{ lancacheIP }}:8085:80"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ UserID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
       MENU_VERSION=1.9.9
     volume:
-      - "/Container/{{ item }}/config:/config:rw"
-      - "/Container/{{ item }}/assets:/assets:rw"
+      - "{{ container_data }}/{{ item }}/config:/config:rw"
+      - "{{ container_data }}/{{ item }}/assets:/assets:rw"
   register: state
 
 - name: Make {{ item }} Systemd service

@@ -9,16 +9,23 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
-      - "{{ Anime }}:/Anime:rw" 
-      - "{{ TV }}:/TV:rw" 
-      - "{{ Youtube }}:/Youtube:rw"
+      - "{{ podman_containers }}/{{ item }}/Config:/config:rw"
+      - "{{ anime }}:/Anime:rw" 
+      - "{{ tv }}:/TV:rw" 
+      - "{{ youtube }}:/Youtube:rw"
     ports:
       - "8096:8096"
       - "8920:8920"
       - "7359:7359/udp"
       # - "1900:1900/udp"
+    
+- name: start and enable {{ item }} 
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"

@@ -27,10 +27,10 @@
     env:
       MYSQL_DATABASE="{{ item }}"
       MYSQL_USER="{{ item }}"
-      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_PASSWORD="{{ sonarr_password }}"
       MYSQL_RANDOM_ROOT_PASSWORD="1"
     volume:
-      - "{{ ContainerData }}/{{ item }}/db:/var/lib/mysql:rw"
+      - "{{ container_data }}/{{ item }}/db:/var/lib/mysql:rw"
 
 #################################################################
 # Create Ghost app
@@ -50,10 +50,10 @@
       database__client=mysql
       database__connection__host="localhost" 
       database__connection__user="{{ item }}"
-      database__connection__password="{{ Sonarr_Password }}"
+      database__connection__password="{{ sonarr_password }}"
       database__connection__database="{{ item }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/var/lib/ghost/content:rw"
+      - "{{ container_data }}/{{ item }}/Config:/var/lib/ghost/content:rw"
 
 - name: Make sure {{ item }} service is enabled and started
   ansible.builtin.systemd:

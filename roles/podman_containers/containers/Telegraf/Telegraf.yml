@@ -16,5 +16,5 @@
       - HOST_RUN="/hostfs/run"
       - HOST_MOUNT_PREFIX="/hostfs"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "{{ container_data }}/{{ item }}/Config/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
       - "/:/hostfs:ro"

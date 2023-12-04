@@ -6,13 +6,13 @@
     ports:
       - 8543:8443/tcp
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "{{ container_data }}/{{ item }}/config:/config:Z,rw"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
-      PASSWORD="{{ VSCode_PASSWORD }}"
-      SUDO_PASSWORD="{{ VSCode_SUDO_PASSWORD }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
+      PASSWORD="{{ vscode_password }}"
+      SUDO_PASSWORD="{{ vscode_sudo_password }}"
   register: state
 
 - name: Make {{ item }} Systemd service

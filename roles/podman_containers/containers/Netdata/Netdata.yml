@@ -6,12 +6,10 @@
     hostname: "{{ ansible_host }}"
     cap_add:
       - SYS_PTRACE
-    security_opt:
-      - apparmor=unconfined
     ports:
       - 19999:19999
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}/config:/etc/netdata:Z,rw"
+      - "{{ container_data }}/{{ item }}/config:/etc/netdata:Z,rw"
       - "/etc/passwd:/host/etc/passwd:z,ro"
       - "/etc/group:/host/etc/group:z,ro"
       - "/etc/os-release:/host/etc/os-release:z,ro"

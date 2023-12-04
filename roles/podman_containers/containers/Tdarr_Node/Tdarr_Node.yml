@@ -11,7 +11,7 @@
       Description={{ item }} container
       After=multi-user.target
       Wants=multi-user.target, network-online.target
-      RequiresMountsFor={{ ContainerData }}/{{ item }}, {{ Anime }}, /run/containers/storage
+      RequiresMountsFor={{ container_data }}/{{ item }}, {{ Anime }}, /run/containers/storage
 
 
       [Service]
@@ -25,12 +25,12 @@
       -e serverPort="8266" \
       -e internalNode="true" \
       -e nodeID="Bikinibodhi" \
-      -e TZ="{{ TimeZone }}" \
-      -e PUID="{{ UserID }}" \
-      -e PGID="{{ GroupID }}" \
-      -v "{{ ContainerData }}/{{ item }}/Config:/app/configs:Z,rw" \
-      -v "{{ ContainerData }}/{{ item }}/Logs:/app/logs:Z,rw" \
-      -v "{{ ContainerData }}/{{ item }}/Tmp:/temp:Z,rw" \
+      -e TZ="{{ time_zone }}" \
+      -e PUID="{{ user_id }}" \
+      -e PGID="{{ group_id }}" \
+      -v "{{ container_data }}/{{ item }}/Config:/app/configs:Z,rw" \
+      -v "{{ container_data }}/{{ item }}/Logs:/app/logs:Z,rw" \
+      -v "{{ container_data }}/{{ item }}/Tmp:/temp:Z,rw" \
       -v "{{ Anime }}:/Anime:rw" \
       -p 8266:8266/tcp \
       ghcr.io/haveagitgat/tdarr_node

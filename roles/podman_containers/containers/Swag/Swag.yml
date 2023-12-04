@@ -11,17 +11,17 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
       URL="shedinternet.net"
-      SUBDOMAINS="cloud"
+      SUBDOMAINS="cloud,wwww"
       VALIDATION="dns"
       DNSPLUGIN="cloudflare"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
     ports:
-      - "192.168.10.1:443:443"
+      - "443:443"
 
 - name: Make sure {{ item }} service is enabled and started
   ansible.builtin.systemd:

@@ -15,15 +15,13 @@
     name: "{{ item }}_db"
     pod: "{{ item }}"
     image: docker.io/library/mysql:5.7
-    security_opt:
-      label=type:Wordpress_db.process
     env:
       MYSQL_DATABASE="{{ item }}"
       MYSQL_USER="{{ item }}"
-      MYSQL_PASSWORD="{{ Sonarr_Password }}"
+      MYSQL_PASSWORD="{{ sonarr_password }}"
       MYSQL_RANDOM_ROOT_PASSWORD="1"
     volume:
-      - "/Container/{{ item }}/db:/var/lib/mysql:Z,rw"
+      - "{{ container_data }}/{{ item }}/db:/var/lib/mysql:Z,rw"
 
   register: state
 
@@ -36,15 +34,13 @@
     name: "{{ item }}_app"
     pod: "{{ item }}"
     image: docker.io/library/wordpress:latest
-    security_opt:
-      label=type:Wordpress_app.process
     env:
-      WORDPRESS_DB_HOST="{{ item }}_db"
+      WORDPRESS_DB_HOST="localhost"
       WORDPRESS_DB_USER="{{ item }}"
-      WORDPRESS_DB_PASSWORD="{{ Sonarr_Password }}"
+      WORDPRESS_DB_PASSWORD="{{ sonarr_password }}"
       WORDPRESS_DB_NAME="{{ item }}"
     volume:
-      - "/Container/{{ item }}/app:/var/www/html:Z,rw"
+      - "{{ container_data }}/{{ item }}/app:/var/www/html:Z,rw"
 
 - name: Make {{ item }} Systemd service
   shell: cd /etc/systemd/system/ && podman generate systemd --files --name {{ item }}

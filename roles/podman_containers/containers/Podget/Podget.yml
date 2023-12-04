@@ -4,13 +4,13 @@
     name: "{{ item }}"
     image: docker.io/snockow6/podget:latest
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ UserID }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
       Refresh=1d
     volume:
-      - "{{ ContainerConfigs }}/{{ item }}:/Podget/.podget:rw"
-      - "{{ Podcasts }}:/Podget/POD:z,rw"
-      - "{{ ContainerLogs }}/{{ item }}:/Podget/logs:rw"
+      - "{{ container_data }}/{{ item }}/Config:/Podget/.podget:rw"
+      - "{{ podcasts }}:/Podget/POD:z,rw"
+      - "{{ container_data }}/{{ item }}/Logs:/Podget/logs:rw"
   register: state
   
 - name: Make {{ item }} Systemd service

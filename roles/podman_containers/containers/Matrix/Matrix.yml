@@ -6,7 +6,7 @@
     ports:
       - "8008:8008"
     volume:
-      - "/Container/{{ item }}/config:/config:Z,rw"
+      - "{{ container_data }}/{{ item }}/config:/config:Z,rw"
   register: state
 
 - name: Make {{ item }} Systemd service

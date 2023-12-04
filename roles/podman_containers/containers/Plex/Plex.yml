@@ -9,9 +9,9 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     ports:
       - 32400:32400
       - 1900:1900/udp
@@ -23,5 +23,5 @@
       - 32414:32414/udp
       - 32469:32469
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
-      - "{{ Anime }}:/Anime:rw" 
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
+      - "{{ anime }}:/Anime:rw" 

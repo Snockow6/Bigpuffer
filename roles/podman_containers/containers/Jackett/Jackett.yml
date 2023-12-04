@@ -21,11 +21,11 @@
       ExecStartPre=-/usr/bin/podman pull ghcr.io/linuxserver/jackett:latest
       ExecStart=/usr/bin/podman run \
       --name {{ item }} \
-      -e PUID="{{ UserID }}" \
-      -e PGID="{{ GroupID }}" \
-      -e TZ="{{ TimeZone }}" \
-      -v "{{ ContainerData }}/{{ item }}/Config:/config:rw" \
-      -v "{{ ContainerData }}/{{ item }}/Downloads:/downloads" \
+      -e PUID="{{ user_id }}" \
+      -e PGID="{{ group_id }}" \
+      -e TZ="{{ time_zone }}" \
+      -v "{{ container_data }}/{{ item }}/Config:/config:rw" \
+      -v "{{ container_data }}/{{ item }}/Downloads:/downloads" \
       -p 9117:9117 \
       ghcr.io/linuxserver/jackett:latest
 

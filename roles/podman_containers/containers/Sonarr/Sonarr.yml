@@ -24,12 +24,12 @@
       restart_policy: "on-failure"
     image: lscr.io/linuxserver/jackett:latest
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/Jackett/Config:/config:rw"
-      - "{{ ContainerData }}/Jackett/Downloads:/downloads:rw"
+      - "{{ container_data }}/Jackett/Config:/config:rw"
+      - "{{ container_data }}/Jackett/Downloads:/downloads:rw"
 
 
 - name: Create {{ item }}_Transmission Podman Container
@@ -43,13 +43,13 @@
       restart_policy: "on-failure"
     image: lscr.io/linuxserver/transmission:latest
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/Transmission/Config:/config:rw"
-      - "{{ ContainerData }}/Transmission/Downloads:/downloads:rw"
-      - "{{ ContainerData }}/Transmission/Watch:/watch:rw" 
+      - "{{ container_data }}/Transmission/Config:/config:rw"
+      - "{{ container_data }}/Transmission/Downloads:/downloads:rw"
+      - "{{ container_data }}/Transmission/Watch:/watch:rw" 
 
 - name: Create {{ item }}_app Podman Container
   containers.podman.podman_container:
@@ -65,12 +65,12 @@
       - "{{ item }}_Jackett"
       - "{{ item }}_Transmission"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/config:rw"
-      - "{{ ContainerData }}/Transmission/Downloads:/downloads:rw"
+      - "{{ container_data }}/{{ item }}/Config:/config:rw"
+      - "{{ container_data }}/Transmission/Downloads:/downloads:rw"
       - "{{ Anime }}:/Anime:rw" 
       - "{{ TV }}:/TV:rw" 
       - "{{ Youtube }}:/Youtube:rw"

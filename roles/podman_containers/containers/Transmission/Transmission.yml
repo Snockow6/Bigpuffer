@@ -11,7 +11,7 @@
       Description={{ item }} container
       After=multi-user.target
       Wants=multi-user.target, network-online.target
-      RequiresMountsFor={{ ContainerData }}/{{ item }}, /run/containers/storage
+      RequiresMountsFor={{ container_data }}/{{ item }}, /run/containers/storage
 
 
       [Service]
@@ -21,18 +21,17 @@
       ExecStartPre=-/usr/bin/podman pull ghcr.io/linuxserver/transmission:latest
       ExecStart=/usr/bin/podman run \
       --name {{ item }} \
-      -e PUID="{{ UserID }}" \
-      -e PGID="{{ GroupID }}" \
-      -e TZ="{{ TimeZone }}" \
-      -e USER="{{ Sonarr_User }}" \
-      -e PASS="{{ Sonarr_Password }}" \
-      -v "{{ ContainerData }}/{{ item }}/Config:/config:rw" \
-      -v "{{ ContainerData }}/{{ item }}/Downloads:/downloads:rw" \
-      -v "{{ ContainerData }}/{{ item }}/Watch:/watch:rw" \
+      -e PUID="{{ user_id }}" \
+      -e PGID="{{ group_id }}" \
+      -e TZ="{{ time_zone }}" \
+      -e USER="{{ sonarr_user }}" \
+      -e PASS="{{ sonarr_password }}" \
+      -v "{{ container_data }}/{{ item }}/Config:/config:rw" \
+      -v "{{ container_data }}/{{ item }}/Downloads:/downloads:rw" \
+      -v "{{ container_data }}/{{ item }}/Watch:/watch:rw" \
       -p 9091:9091 \
       -p 51413:51413 \
       -p 51413:51413/udp \
-      --security-opt label=type:Transmission.process \
       ghcr.io/linuxserver/transmission:latest
 
       ExecStop=/usr/bin/podman stop {{ item }}

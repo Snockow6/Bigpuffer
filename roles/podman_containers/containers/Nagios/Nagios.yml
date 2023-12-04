@@ -13,33 +13,19 @@
     ports:
       - "9443:443"
     env:
-      PUID="{{ UserID }}"
-      PGID="{{ GroupID }}"
-      TZ="{{ TimeZone }}"
+      PUID="{{ user_id }}"
+      PGID="{{ group_id }}"
+      TZ="{{ time_zone }}"
     volume:
-      - "{{ ContainerData }}/{{ item }}/etc:/opt/nagios/etc:rw"
-      - "{{ ContainerData }}/{{ item }}/var:/opt/nagios/var:rw"
-      - "{{ ContainerData }}/{{ item }}/Custom-Nagios-Plugins:/opt/Custom-Nagios-Plugins:rw"
-      - "{{ ContainerData }}/{{ item }}/nagiosgraph/var:/opt/nagiosgraph/var:rw"
-      - "{{ ContainerData }}/{{ item }}/nagiosgraph/etc:/opt/nagiosgraph/etc:rw"
-  register: state
+      - "{{ container_data }}/{{ item }}/etc:/opt/nagios/etc:rw"
+      - "{{ container_data }}/{{ item }}/var:/opt/nagios/var:rw"
+      - "{{ container_data }}/{{ item }}/Custom-Nagios-Plugins:/opt/Custom-Nagios-Plugins:rw"
+      - "{{ container_data }}/{{ item }}/nagiosgraph/var:/opt/nagiosgraph/var:rw"
+      - "{{ container_data }}/{{ item }}/nagiosgraph/etc:/opt/nagiosgraph/etc:rw"
 
-- name: Pause for 10 seconds to start app
-  pause:
-    seconds: 10
-  when: state.changed == true
-
-- name: restart {{ item }} service if change
+- name: Start {{ item }} service
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: yes
     enabled: yes
     name: "container-{{ item }}"
-  when: state.changed == true
-
-- name: Start {{ item }} service
-  ansible.builtin.systemd:
-    state: started
-    enabled: yes
-    name: "container-{{ item }}"
-  when: state.changed == false

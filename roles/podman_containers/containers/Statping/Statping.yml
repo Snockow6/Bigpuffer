@@ -10,7 +10,7 @@
       path: /etc/systemd/system/
       restart_policy: "on-failure"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Config:/app:rw"    
+      - "{{ container_data }}/{{ item }}/Config:/app:rw"    
     ports:
       - "8084:8080"           
 

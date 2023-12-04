@@ -21,12 +21,12 @@
 
 - name: Create {{ item }} config folder
   file:
-    path: "/Container/{{ item }}/config"
+    path: "{{ container_data }}/{{ item }}/config"
     state: directory
 
 - name: Create dnsmasq folder
   file:
-    path: "/Container/{{ item }}/dnsmasqd"
+    path: "{{ container_data }}/{{ item }}/dnsmasqd"
     state: directory
 
 - name: Create {{ item }} Podman Container
@@ -40,19 +40,19 @@
       - NET_ADMIN
       - NET_RAW
     ports:
-      - "{{ PiholeIP }}:53:53/tcp"
-      - "{{ PiholeIP }}:53:53/udp"
-      - "{{ PiholeIP }}:80:80/tcp"
+      - "{{ pihole_ip }}:53:53/tcp"
+      - "{{ pihole_ip }}:53:53/udp"
+      - "{{ pihole_ip }}:80:80/tcp"
     env:
       DNSMASQ_USER=root
-      TZ="{{ TimeZone }}"
-      WEBPASSWORD="{{ Sonarr_Password }}"
-      DNS2="{{ lancacheIP }}"
+      TZ="{{ time_zone }}"
+      WEBPASSWORD="{{ sonarr_password }}"
+      DNS2="{{ lancache_ip }}"
       DNS1="192.168.10.5"
-      ServerIP="{{ PiholeIP }}"
+      ServerIP="{{ pihole_ip }}"
     volume:
-      - "/Container/{{ item }}/config:/etc/pihole/:Z,rw"
-      - "/Container/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:Z,rw"
+      - "{{ container_data }}/{{ item }}/config:/etc/pihole/:Z,rw"
+      - "{{ container_data }}/{{ item }}/dnsmasqd:/etc/dnsmasq.d/:Z,rw"
   register: state
 
 #podman generate systemd --files --name Wordpress 

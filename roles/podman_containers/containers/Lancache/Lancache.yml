@@ -4,10 +4,10 @@
     name: "{{ item }}"
     state: started
     ports:
-      - "{{ lancacheIP }}:5353:53/udp"
-      - "{{ lancacheIP }}:5353:53/tcp"
-      - "{{ lancacheIP }}:80:80/tcp"
-      - "{{ lancacheIP }}:443:443/tcp"
+      - "{{ lancache_ip }}:5353:53/udp"
+      - "{{ lancache_ip }}:5353:53/tcp"
+      - "{{ lancache_ip }}:80:80/tcp"
+      - "{{ lancache_ip }}:443:443/tcp"
   register: state
   
 - name: Create {{ item }}-dns Podman Container
@@ -16,7 +16,7 @@
     pod: "{{ item }}"
     image: docker.io/lancachenet/lancache-dns:latest
     env:
-      LANCACHE_IP="{{ lancacheIP }}"
+      LANCACHE_IP="{{ container_data }}"
       USE_GENERIC_CACHE="true"
 
 - name: Create {{ item }}-monilithic Podman Container
@@ -30,8 +30,8 @@
       CACHE_MAX_AGE="350d"
       UPSTREAM_DNS="1.1.1.1"
     volume:
-      - "{{ ContainerData }}/{{ item }}/Data:/data/cache:rw"
-      - "{{ ContainerData }}/{{ item }}/Logs:/data/logs:rw"
+      - "{{ container_data }}/{{ item }}/Data:/data/cache:rw"
+      - "{{ container_data }}/{{ item }}/Logs:/data/logs:rw"
 
 - name: Make {{ item }} Systemd service
   shell: cd /etc/systemd/system && podman generate systemd --files --name {{ item }}
