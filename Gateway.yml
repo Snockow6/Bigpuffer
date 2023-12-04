@@ -1,0 +1,77 @@
+---
+- name: Playbook to install podman and configure containers on gateway server
+  become: yes
+  hosts: 
+    - gateway
+  vars_files:
+    - vars/user.yml
+    - vars/group.yml
+  vars:    
+    ## Container vars
+    container_data: /Containers
+    podman_containers:
+      # - Adguardhome
+      # - Statping
+      # - Jellyfin
+      # - Plex
+      # - Tdarr
+      # - Sonarr
+      # - Heimdall
+      - Nextcloud
+      # - Nagios
+      # - Gitea
+      # - Prometheus
+      # - Valheim
+      # - Lancache
+      - Ghost
+      - Swag
+      # - Unbound
+      #- Influxdb
+
+    sonarr_user: localadmin
+    sonarr_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          33323634386266326236323537636232636233303730346662303164346133653731323962336261
+          6134343666393234393235373662316365363864663135350a646232653334316239383430326166
+          37653234613061313030393536363934386630306563383030356165323234383966643166363364
+          3964646236343836340a343930346666666134643833333736663437396537396464373332336662
+          6263
+
+    #Linuxserver.io vars
+    user_id: 101009 # abc user
+    group_id: 101009 # serverio group
+    time_zone: Pacific/Auckland
+    ## Lancache 
+    lancache_ip: 192.168.10.3
+    
+    pihole_ip: 192.168.10.3
+    valheimPass: !vault |
+                 $ANSIBLE_VAULT;1.1;AES256
+                 65663630306635633431363063663337323437663862616366313662613039316434383030323061
+                 3065353965383239333863396138363036356365613939630a313931623136376664666436303838
+                 37336133343663666232333930333736363266303463336534393434643139316362306261396162
+                 6263373237656330340a633436333939623434616166313631343530323730656462366137343161
+                 3638
+  tasks:
+    - name: Update linux
+      ansible.builtin.import_role:
+        name: update_linux
+    
+    # - name: Add mounts to fstab and mount it
+    #   ansible.builtin.include_tasks: playbooks/mount/mount.yml
+
+    - name: Add groups
+      ansible.builtin.import_tasks: playbooks/create-group.yml    
+
+
+    - name: Add users
+      ansible.builtin.import_tasks: playbooks/create-user.yml
+
+
+    # - name: install podman
+    #   include_role: 
+    #     name: podman_install
+    
+    - name: Run containers
+      ansible.builtin.import_role: 
+        name: podman_containers
