@@ -1,0 +1,15 @@
+---
+## Install and configure Unattended Upgrades for Debian
+- name: Install Unattended Upgrades
+  ansible.builtin.package:
+    state: present
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+
+- name: Create and set 20auto-upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";

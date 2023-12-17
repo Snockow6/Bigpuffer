@@ -13,3 +13,7 @@
   ansible.builtin.package:
     name: "*"
     state: latest
+
+- name: Install Unattended Upgrades for Debian
+  ansible.builtin.include_tasks: unattended_upgrades.yml
+  when: ansible_distribution == 'Debian'
