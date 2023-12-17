@@ -1,51 +1,51 @@
 ---
 # tasks file for kvm_provision
 - name: Ensure requirements in place
-  package:
+  ansible.builtin.package:
     name:
       - guestfs-tools
       - python3-libvirt
     state: present
-  become: yes
 
 - name: Get VMs list
   community.libvirt.virt:
     command: list_vms
   register: existing_vms
-  changed_when: no
+  changed_when: false
 
 - name: Create VM if not exists
   block:
   - name: Download base image
-    get_url:
+    ansible.builtin.get_url:
       url: "{{ base_image_url }}"
       dest: "/tmp/{{ base_image_name }}"
       checksum: "sha256:{{ base_image_sha }}"
 
   - name: Copy base image to libvirt directory
-    copy:
+    ansible.builtin.copy:
       dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
       src: "/tmp/{{ base_image_name }}"
-      force: no
-      remote_src: yes 
+      force: false
+      remote_src: true
       mode: 0660
     register: copy_results
 
   - name: Configure the image ## find better way to execute other than command
-    command: |
+    ansible.builtin.command: |
       virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 \
       --hostname {{ vm_name }} \
       --root-password password:{{ vm_root_pass }} \
       --ssh-inject 'root:file:{{ ssh_key }}' \
-      --uninstall cloud-init --selinux-relabel 
+      --firstboot-command 'dnf update -y && dnf install cockpit && systemctl enable cockpit.socket' \
+      --uninstall cloud-init --selinux-relabel
     when: copy_results is changed
-  
+
   - name: Define vm
     community.libvirt.virt:
       command: define
       xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
   when: "vm_name not in existing_vms.list_vms"
-  
+
 - name: Ensure VM is started
   community.libvirt.virt:
     name: "{{ vm_name }}"
@@ -56,7 +56,7 @@
   delay: 2
 
 - name: Ensure temporary file is deleted
-  file:
+  ansible.builtin.file:
     path: "/tmp/{{ base_image_name }}"
     state: absent
   when: cleanup_tmp | bool
