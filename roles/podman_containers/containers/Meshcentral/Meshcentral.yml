@@ -1,0 +1,33 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/typhonragewind/meshcentral:latest
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    env:
+      HOSTNAME="{{ ansible_hostname }}"
+      REVERSE_PROXY=false 
+      REVERSE_PROXY_TLS_PORT=
+      IFRAME=false
+      ALLOW_NEW_ACCOUNTS=true
+      WEBRTC=false
+      BACKUPS_PW="{{ sonarr_password }}"
+      BACKUP_INTERVAL=24
+      BACKUP_KEEP_DAYS=10
+    volume:
+      - "{{ container_data }}/{{ item }}/Data:/opt/meshcentral/meshcentral-data:rw"
+      - "{{ container_data }}/{{ item }}/User_files:/opt/meshcentral/meshcentral-files:rw"
+      - "{{ container_data }}/{{ item }}/Backups:/opt/meshcentral/meshcentral-backups:rw"
+    ports:
+      - "8196:443"
+    
+- name: start and enable {{ item }} 
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
