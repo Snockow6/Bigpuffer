@@ -1,0 +1,99 @@
+---
+- name: Playbook to configure home or office server
+  hosts:
+    # - hpelite
+    - 192.168.10.127
+  become: true
+
+  tasks:
+    - name: Update linux
+      ansible.builtin.include_role:
+        name: update_linux
+
+    - name: Debian
+      when: ansible_os_family == "Debian"
+      block:
+      - name: Install Dependencies
+        ansible.builtin.apt:
+          name:
+            - ca-certificates
+            - cockpit
+            - attr
+            - coreutils
+            - libc-bin
+            - nfs-kernel-server
+            - samba
+            - samba-common-bin
+            - systemd
+            - winbind
+            - gawk
+          state: present
+
+      - name: Add 45drives repo signing key to apt
+        ansible.builtin.apt_key:
+          url: https://repo.45drives.com/key/gpg.asc
+          state: present
+
+      - name: Add 45drives repo to apt
+        ansible.builtin.get_url:
+          url: https://repo.45drives.com/lists/45drives.sources
+          dest: /etc/apt/sources.list.d/45drives.sources
+          mode: u=rw,g=r,o=r
+
+      - name: Install 45drives cockpit extentions
+        ansible.builtin.apt:
+          name:
+            - cockpit-identities
+            - cockpit-file-sharing
+            - cockpit-navigator
+
+    - name: RedHat
+      when: ansible_os_family == 'RedHat'
+      block:
+      - name: Install Dependencies
+        ansible.builtin.package:
+          name:
+            - cockpit
+            - coreutils
+            - nfs-utils
+            - samba
+            - samba-common-tools
+            - samba-winbind-clients
+          state: present
+
+      - name: Enable smb
+        ansible.builtin.systemd:
+          state: started
+          enabled: true
+          name: smb
+
+      - name: Enable nmb
+        ansible.builtin.systemd:
+          state: started
+          enabled: true
+          name: smb
+
+      - name: Add 45drives repo to apt
+        ansible.builtin.get_url:
+          url: https://repo.45drives.com/lists/45drives.repo
+          dest: /etc/yum.repos.d/45drives.repo
+          mode: u=rw,g=r,o=r
+
+      - name: Install 45drives cockpit extentions
+        ansible.builtin.dnf:
+          name:
+            - cockpit-identities
+            - cockpit-file-sharing
+            - cockpit-navigator
+
+      - name: Enable and start cockpit.socket
+        ansible.builtin.systemd:
+          state: started
+          enabled: true
+          name: cockpit.socket
+
+      - name: Allow cockpit on firewalld
+        ansible.posix.firewalld:
+          service: cockpit
+          permanent: true
+          state: enabled
