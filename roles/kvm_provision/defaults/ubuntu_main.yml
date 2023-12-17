@@ -1,0 +1,15 @@
+---
+# defaults file for kvm_provision
+base_image_name: noble-server-cloudimg-amd64.img
+base_image_url: https://cloud-images.ubuntu.com/noble/current/{{ base_image_name }}
+base_image_sha: 821ff03fd991453e117d8b09d9e3e80b654d716b626645717e28fec0cd74036e
+libvirt_pool_dir: "/var/lib/libvirt/images"
+vm_name: us2022
+vm_vcpus: 2
+vm_ram_mb: 2048
+vm_net_name: SHED
+vm_net_type: bridge
+vm_root_pass: bLo3med1405
+cleanup_tmp: false
+ssh_key: /root/.ssh/id_rsa.pub ## on local host of virt machine
+machine_type: /usr/bin/qemu-system-x86_64
