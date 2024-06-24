@@ -2,8 +2,10 @@
 - name: Playbook to update all servers
   hosts:
     # - 192.168.10.1
+    # - 192.168.10.53
     - bigpuffer
-    - gateway
+    # - hpelite
+    # - gateway
     # - ubuntu-us-central
   become: true
 
@@ -11,3 +13,7 @@
     - name: Update linux
       ansible.builtin.include_role:
         name: update_linux
+
+    - name: Install Unattended Upgrades
+      ansible.builtin.include_tasks: playbooks/automated-updates/unattended_upgrades.yml
+      when: ansible_distribution == 'Debian'
