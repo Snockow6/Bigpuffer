@@ -1,22 +1,23 @@
 ---
-- name: Create {{ item }} pod
-  containers.podman.podman_pod:
-    name: "{{ item }}"
-    state: started
-    ports:
-      - "8989:8989"
-      - "9091:9091"
-      - "9117:9117"
-    generate_systemd:
-      new: false
-      names: true
-      path: /etc/systemd/system/
-      restart_policy: "on-failure"
+# - name: Create {{ item }} pod
+#   containers.podman.podman_pod:
+#     name: "{{ item }}"
+#     state: started
+#     ports:
+#       - "8989:8989"
+#       - "9091:9091"
+#       - "9117:9117"
+#     generate_systemd:
+#       new: false
+#       names: true
+#       path: /etc/systemd/system/
+#       restart_policy: "on-failure"
 
 - name: Create {{ item }}_Jackett Podman Container
   containers.podman.podman_container:
     name: "{{ item }}_Jackett"
-    pod: "{{ item }}"
+    # pod: "{{ item }}"
+    dns_servers: "8.8.4.4"
     generate_systemd:
       new: false
       names: true
@@ -27,6 +28,8 @@
       PUID="{{ user_id }}"
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
+    ports:
+     - "9117:9117"
     volume:
       - "{{ container_data }}/Jackett/Config:/config:rw"
       - "{{ container_data }}/Jackett/Downloads:/downloads:rw"
@@ -35,7 +38,8 @@
 - name: Create {{ item }}_Transmission Podman Container
   containers.podman.podman_container:
     name: "{{ item }}_Transmission"
-    pod: "{{ item }}"
+    # pod: "{{ item }}"
+    dns: "192.168.10.3"
     generate_systemd:
       new: false
       names: true
@@ -46,6 +50,8 @@
       PUID="{{ user_id }}"
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
+    ports:
+     - "9091:9091"
     volume:
       - "{{ container_data }}/Transmission/Config:/config:rw"
       - "{{ container_data }}/Transmission/Downloads:/downloads:rw"
@@ -54,7 +60,8 @@
 - name: Create {{ item }}_app Podman Container
   containers.podman.podman_container:
     name: "{{ item }}_app"
-    pod: "{{ item }}"
+    # pod: "{{ item }}"
+    dns: "192.168.10.3"
     image: lscr.io/linuxserver/sonarr:latest
     generate_systemd:
       new: false
@@ -68,6 +75,8 @@
       PUID="{{ user_id }}"
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
+    ports:
+     - "8989:8989"
     volume:
       - "{{ container_data }}/{{ item }}/Config:/config:rw"
       - "{{ container_data }}/Transmission/Downloads:/downloads:rw"
