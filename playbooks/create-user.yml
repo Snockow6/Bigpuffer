@@ -1,5 +1,5 @@
 ---
-- name: create standard User
+- name: Create standard User
   loop: "{{ create_users }}"
   ansible.builtin.user:
     name: "{{ item.name }}"
@@ -9,7 +9,7 @@
     groups: "{{ item.groups }}"
   when: item.type is not defined
 
-- name: create Admin RedHat User
+- name: Create Admin RedHat User
   loop: "{{ create_users }}"
   ansible.builtin.user:
     name: "{{ item.name }}"
@@ -19,7 +19,7 @@
     groups: "{{ item.groups }},wheel"
   when: item.type is defined and item.type == "admin" and ansible_os_family == "RedHat"
 
-- name: create Admin Debian User
+- name: Create Admin Debian User
   loop: "{{ create_users }}"
   ansible.builtin.user:
     name: "{{ item.name }}"
