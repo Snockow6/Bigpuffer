@@ -12,6 +12,7 @@
       PUID="{{ user_id }}"
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
+      PLEX_CLAIM="claim-btGH6RsA2ay2qWZoXSAa"
     ports:
       - 32400:32400
       - 1900:1900/udp
@@ -25,3 +26,5 @@
     volume:
       - "{{ container_data }}/{{ item }}/Config:/config:rw"
       - "{{ anime }}:/Anime:rw" 
+      - "{{ movies }}:/Movies:rw"
+      - "{{ tv }}:/TV:rw"
