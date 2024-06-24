@@ -1,0 +1,20 @@
+---
+- name: Create {{ item }} Podman Container
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: docker.io/cncjs/cncjs:latest
+    generate_systemd:
+      new: false
+      names: true
+      path: /etc/systemd/system/
+      restart_policy: "on-failure"
+    ports:
+      - "8000:8000"
+    privileged: true 
+    
+- name: start and enable {{ item }} 
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: "container-{{ item }}"
