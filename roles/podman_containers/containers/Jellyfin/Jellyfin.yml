@@ -8,14 +8,16 @@
       names: true
       path: /etc/systemd/system/
       restart_policy: "on-failure"
+    # device:
+    #   - /dev/dri:/dev/dri
     env:
       PUID="{{ user_id }}"
       PGID="{{ group_id }}"
       TZ="{{ time_zone }}"
     volume:
       - "{{ container_data }}/{{ item }}/Config:/config:rw"
-      - "{{ anime }}:/Anime:rw" 
-      - "{{ tv }}:/TV:rw" 
+      - "{{ anime }}:/Anime:rw"
+      - "{{ tv }}:/TV:rw"
       - "{{ youtube }}:/Youtube:rw"
     ports:
       - "8096:8096"
